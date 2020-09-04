@@ -10,7 +10,12 @@ const Soup = imports.gi.Soup;
 
 const API_URL = 'https://am.i.mullvad.net/json';
 
+const ConnectedIcon = 'mullvad-connected-symbolic';
+const DisconnectedIcon = 'mullvad-disconnected-symbolic';
+
 let mvIndicator;
+
+const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 let MVSTATUS;
 let MVIPADDR;
@@ -28,9 +33,9 @@ const MullvadIndicator = GObject.registerClass({
     super._init(0);
 
     this.icon = new St.Icon({
-      icon_name : 'security-low-symbolic',
       style_class : 'system-status-icon',
     });
+    this.icon.gicon = Gio.icon_new_for_string(`${Me.path}/icons/${DisconnectedIcon}.svg`);
 
     this.add_child(this.icon);
 
@@ -103,10 +108,11 @@ const MullvadIndicator = GObject.registerClass({
   _update() {
     if (MVSTATUS === true) {
       this.conn_status.set_text('Connected');
-      this.icon.icon_name = 'security-high-symbolic';
+      this.icon.gicon = Gio.icon_new_for_string(`${Me.path}/icons/${ConnectedIcon}.svg`);
     } else {
+      log("Disconnected");
       this.conn_status.set_text('Disconnected');
-      this.icon.icon_name = 'security-low-symbolic';
+      this.icon.gicon = Gio.icon_new_for_string(`${Me.path}/icons/${DisconnectedIcon}.svg`);
     }
     this.ip_addr.set_text(MVIPADDR || '');
     this.server.set_text(MVSERVER || '');
