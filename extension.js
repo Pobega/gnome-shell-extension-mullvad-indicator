@@ -114,8 +114,8 @@ const MullvadIndicator = GObject.registerClass({
             this._conn_status.set_text('Disconnected');
             this._updateIcon(disconnectedIcon);
         }
-        this._ip_addr.set_text(this.statusIpAddr || '');
-        this._server.set_text(this.statusServer || '');
+        this._ip_addr.set_text(this._statusIpAddr || '');
+        this._server.set_text(this._statusServer || '');
     }
 
     stop() {
