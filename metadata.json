@@ -1,0 +1,8 @@
+{
+  "name": "Mullvad Indicator",
+  "description": "am.i.mullvad.net systray indicator",
+  "uuid": "mullvadindicator@pobega.github.com",
+  "shell-version": [
+    "3.36"
+  ]
+}

@@ -1,0 +1,1 @@
+# mullvad-gnome-indicator
