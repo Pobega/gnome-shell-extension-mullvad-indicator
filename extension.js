@@ -105,6 +105,35 @@ const MullvadIndicator = GObject.registerClass({
         this.menu.addMenuItem(popupMenu);
 
         Main.panel.addToStatusArea('AmIMullvad', this, 1);
+
+        // Initial state
+        let vpnInfoRow = new St.BoxLayout({
+            x_align: Clutter.ActorAlign.START,
+            x_expand: true,
+        });
+        this.vpnInfoBox.add_actor(vpnInfoRow);
+
+        let label = new St.Label({
+            style_class: 'vpn-info-vpn-init',
+            text: _("Mullvad") + ': ',
+            x_align: Clutter.ActorAlign.CENTER,
+            x_expand: true,
+        });
+        vpnInfoRow.add_actor(label);
+
+        let vpnLabel = new St.Label({
+            style_class: 'vpn-info-vpn-init',
+            text: 'Checking...',
+        });
+        vpnInfoRow.add_actor(vpnLabel);
+
+        let vpnIcon = new St.Icon({
+            icon_name: 'emblem-synchronizing-symbolic',
+            style_class: 'popup-menu-icon vpn-icon-vpn-init',
+        });
+        vpnInfoRow.add_actor(vpnIcon);
+
+        this.vpnInfoBox.add_actor(new PopupMenu.PopupSeparatorMenuItem());
     }
 
     _initConnStatus() {
@@ -145,6 +174,12 @@ const MullvadIndicator = GObject.registerClass({
     }
 
     _checkIfStatusChanged(api_response) {
+        // if api_response is null we want to assume we're disconnected
+        if (!api_response) {
+            this._connected = false;
+            this._updateGui();
+            return
+        }
         // Only update if our status has changed
         if (this._connected !== api_response.mullvad_exit_ip ||
             this._connStatus.ip.text !== api_response.ip ||
@@ -159,7 +194,6 @@ const MullvadIndicator = GObject.registerClass({
 
             // Tell the GUI to redraw
             this._updateGui();
-        } else {
         }
     }
 
@@ -187,13 +221,13 @@ const MullvadIndicator = GObject.registerClass({
         });
         vpnInfoRow.add_actor(vpnLabel);
 
-        this.vpnInfoBox.add_actor(new PopupMenu.PopupSeparatorMenuItem());
-
         let vpnIcon = new St.Icon({
             icon_name: this._connected ? 'security-high-symbolic' : 'security-low-symbolic',
             style_class: this._connected ? 'popup-menu-icon vpn-icon-vpn-on' : 'popup-menu-icon vpn-icon-vpn-off',
         });
         vpnInfoRow.add_actor(vpnIcon);
+
+        this.vpnInfoBox.add_actor(new PopupMenu.PopupSeparatorMenuItem());
 
         if (this._connected === true) {
             this._updateTrayIcon(ICON_CONNECTED);
