@@ -1,1 +1,22 @@
-/* Add your custom extension styling here */
+.vpn-info-key {
+    color: #5294e2;
+}
+
+.vpn-info-vpn-on {
+    padding-left: 20px;
+    color: #6ae252;
+}
+
+.vpn-info-vpn-off {
+    padding-left: 20px;
+    color: #e25252;
+}
+
+.vpn-info-box {
+    padding-left: 20px;
+    min-width: 240px;
+}
+
+.vpn-info-value {
+    color: #838A85;
+}

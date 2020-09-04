@@ -1,7 +1,7 @@
 {
-  "name": "Mullvad Indicator",
+  "name": "Am I Mullvad?",
   "description": "am.i.mullvad.net systray indicator",
-  "uuid": "mullvadindicator@pobega.github.com",
+  "uuid": "amimullvad@pobega.github.com",
   "shell-version": [
     "3.36"
   ]
