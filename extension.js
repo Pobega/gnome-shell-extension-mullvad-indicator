@@ -30,15 +30,22 @@ const MullvadIndicator = GObject.registerClass({
     _init() {
         super._init(0);
 
+        this._initConnStatus();
         this._connected = false;
-        // We use JSON here to 'clone' from our default Object
-        this._connStatus = JSON.parse(JSON.stringify(DEFAULT_DATA));
 
+        // Initialize the tray icon & GUI
+        this._initGui();
+
+        // Start the refresh Mainloop
+        this._refresh();
+    }
+
+    _initGui() {
         // Taskbar icon
         this._icon = new St.Icon({
             style_class: 'system-status-icon',
         });
-        this._updateIcon(ICON_DISCONNECTED);
+        this._updateTrayIcon(ICON_DISCONNECTED);
         this.add_child(this._icon);
         // End taskbar icon
 
@@ -48,18 +55,19 @@ const MullvadIndicator = GObject.registerClass({
         let parentContainer = new St.BoxLayout({
             x_align: Clutter.ActorAlign.FILL,
             x_expand: true,
-            style: "min-width:240px; padding-bottom: 10px;"
+            style: "padding-bottom: 12px;"
         });
         // End popup menu
 
+        // Highest level text box
         this.vpnInfoBox = new St.BoxLayout({
-            style_class: 'ip-info-box',
+            style_class: 'vpn-info-box',
             vertical: true ,
-            x_align: Clutter.ActorAlign.CENTER,
         });
         parentContainer.add_actor(this.vpnInfoBox);
         popupMenu.actor.add(parentContainer);
         this.menu.addMenuItem(popupMenu);
+        // End highest level text box
 
         // Settings button
         let buttonBox = new St.BoxLayout();
@@ -97,15 +105,19 @@ const MullvadIndicator = GObject.registerClass({
         this.menu.addMenuItem(popupMenu);
 
         Main.panel.addToStatusArea('AmIMullvad', this, 1);
-        this._refresh();
+    }
+
+    _initConnStatus() {
+        // We use JSON here to 'clone' from our default Object
+        this._connStatus = JSON.parse(JSON.stringify(DEFAULT_DATA));
     }
 
     _forceUpdate() {
-        this._connStatus = JSON.parse(JSON.stringify(DEFAULT_DATA));
+        this._initConnStatus();
         this._fetchConnectionInfo();
     }
 
-    _updateIcon(relative_path) {
+    _updateTrayIcon(relative_path) {
         this._icon.gicon = Gio.icon_new_for_string(`${Me.path}/icons/${relative_path}.svg`);
     }
 
@@ -121,7 +133,6 @@ const MullvadIndicator = GObject.registerClass({
     }
 
     _fetchConnectionInfo() {
-        global.log('mullvad - fetching conn info');
         let _httpSession = new Soup.Session();
         let message = Soup.Message.new('GET', API_URL);
         // Fake CURL to prevent 403
@@ -138,39 +149,41 @@ const MullvadIndicator = GObject.registerClass({
         if (this._connected !== api_response.mullvad_exit_ip ||
             this._connStatus.ip.text !== api_response.ip ||
             this._connStatus.server.text !== api_response.mullvad_exit_ip_hostname) {
+            // Overwrite all values with the API response
             this._connected = api_response.mullvad_exit_ip;
             this._connStatus.ip.text = api_response.ip;
             this._connStatus.server.text = api_response.mullvad_exit_ip_hostname;
             this._connStatus.city.text = api_response.city;
             this._connStatus.country.text = api_response.country;
             this._connStatus.type.text = api_response.mullvad_server_type;
+
+            // Tell the GUI to redraw
             this._updateGui();
         } else {
         }
     }
 
     _updateGui() {
+        // Destroy current inner text boxes
         this.vpnInfoBox.destroy_all_children();
 
-        let vpnInfoRow = new St.BoxLayout();
+        let vpnInfoRow = new St.BoxLayout({
+            x_align: Clutter.ActorAlign.START,
+            x_expand: true,
+        });
         this.vpnInfoBox.add_actor(vpnInfoRow);
 
         let label = new St.Label({
             style_class: this._connected ? 'vpn-info-vpn-on' : 'vpn-info-vpn-off',
             text: _("Mullvad") + ': ',
-            x_align: Clutter.ActorAlign.START,
-            y_align: Clutter.ActorAlign.START,
-            y_expand: false,
+            x_align: Clutter.ActorAlign.CENTER,
+            x_expand: true,
         });
         vpnInfoRow.add_actor(label);
 
         let vpnLabel = new St.Label({
-            style_class: this._connected ? 'ip-info-vpn-on' : 'ip-info-vpn-off',
+            style_class: this._connected ? 'vpn-info-vpn-on' : 'vpn-info-vpn-off',
             text: this._connected ? 'Connected' : 'Disconnected',
-            x_align: Clutter.ActorAlign.FILL,
-            y_align: Clutter.ActorAlign.START,
-            x_expand: true,
-            y_expand: false,
         });
         vpnInfoRow.add_actor(vpnLabel);
 
@@ -178,16 +191,14 @@ const MullvadIndicator = GObject.registerClass({
 
         let vpnIcon = new St.Icon({
             icon_name: this._connected ? 'security-high-symbolic' : 'security-low-symbolic',
-            style_class: this._connected ? 'popup-menu-icon vpn-info-vpn-on' : 'popup-menu-icon vpn-info-vpn-off',
-            x_align: Clutter.ActorAlign.END,
-            x_expand: true,
+            style_class: this._connected ? 'popup-menu-icon vpn-icon-vpn-on' : 'popup-menu-icon vpn-icon-vpn-off',
         });
         vpnInfoRow.add_actor(vpnIcon);
 
         if (this._connected === true) {
-            this._updateIcon(ICON_CONNECTED);
+            this._updateTrayIcon(ICON_CONNECTED);
         } else {
-            this._updateIcon(ICON_DISCONNECTED);
+            this._updateTrayIcon(ICON_DISCONNECTED);
             return;
         }
 
@@ -199,7 +210,6 @@ const MullvadIndicator = GObject.registerClass({
                 let label = new St.Label({
                     style_class: 'vpn-info-key',
                     text: _(DEFAULT_DATA[key].name) + ': ',
-                    x_align: Clutter.ActorAlign.FILL,
                     y_align: Clutter.ActorAlign.CENTER,
                     y_expand: true,
                 });
@@ -208,9 +218,7 @@ const MullvadIndicator = GObject.registerClass({
                 let infoLabel = new St.Label({
                     style_class: 'vpn-info-value',
                     text: this._connStatus[key].text || '',
-                    x_align: Clutter.ActorAlign.FILL,
                     y_align: Clutter.ActorAlign.CENTER,
-                    x_expand: true,
                     y_expand: true,
                 });
                 let dataLabelBtn = new St.Button({
@@ -225,6 +233,7 @@ const MullvadIndicator = GObject.registerClass({
     }
 
     stop() {
+        // Kill our mainloop when we shut down
         if (this._timeout)
             Mainloop.source_remove(this._timeout);
         this._timeout = undefined;

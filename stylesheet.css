@@ -3,11 +3,19 @@
 }
 
 .vpn-info-vpn-on {
-    padding-left: 20px;
     color: #6ae252;
 }
 
 .vpn-info-vpn-off {
+    color: #e25252;
+}
+
+.vpn-icon-vpn-on {
+    padding-left: 20px;
+    color: #6ae252;
+}
+
+.vpn-icon-vpn-off {
     padding-left: 20px;
     color: #e25252;
 }
