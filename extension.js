@@ -141,7 +141,8 @@ const MullvadIndicator = GObject.registerClass({
             Mainloop.source_remove(this._timeout);
             this._timeout = null;
         }
-        this._timeout = Mainloop.timeout_add_seconds(600, function () {
+        let _refreshTime = getSettings().get_int('refresh-time');
+        this._timeout = Mainloop.timeout_add_seconds(_refreshTime, function () {
             this._refresh();
         }.bind(this));
     }
@@ -155,6 +156,23 @@ const MullvadIndicator = GObject.registerClass({
     }
 
 });
+
+function getSettings() {
+    let GioSSS = Gio.SettingsSchemaSource;
+    let schemaSource = GioSSS.new_from_directory(
+        Me.dir.get_child("schemas").get_path(),
+        GioSSS.get_default(),
+        false,
+    );
+    let schemaObj = schemaSource.lookup(
+        "org.gnome.shell.extensions.amimullvad",
+        true,
+    );
+    if (!schemaObj) {
+        throw new Error('cannot find schemas');
+    }
+    return new Gio.Settings({settings_schema: schemaObj});
+}
 
 function init() {
 }

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<schemalist>
+    <schema id="org.gnome.shell.extensions.amimullvad"
+        path="/org/gnome/shell/extensions/amimullvad/">
+
+        <key type="i" name="refresh-time">
+            <default>600</default>
+            <summary>Refresh time</summary>
+            <description>The amount of seconds to wait without network events before doing a timed connection check</description>
+        </key>
+
+        <key type="b" name="show-server">
+            <default>true</default>
+            <summary>Show Server</summary>
+            <description>Show your currently connected server</description>
+        </key>
+
+        <key type="b" name="show-country">
+            <default>true</default>
+            <summary>Show Country</summary>
+            <description>Show your server's country</description>
+        </key>
+
+        <key type="b" name="show-city">
+            <default>true</default>
+            <summary>Show City</summary>
+            <description>Show your server's city</description>
+        </key>
+
+        <key type="b" name="show-ip">
+            <default>true</default>
+            <summary>Show IP</summary>
+            <description>Show your current VPN IP address</description>
+        </key>
+
+        <key type="b" name="show-type">
+            <default>true</default>
+            <summary>Show VPN Type</summary>
+            <description>Show your VPN Protocol (Wireguard, OpenVPN)</description>
+        </key>
+
+    </schema>
+</schemalist>
