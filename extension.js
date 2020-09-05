@@ -1,4 +1,5 @@
 const GObject = imports.gi.GObject;
+const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
 const Soup = imports.gi.Soup;
 
@@ -17,9 +18,9 @@ const ICON_CONNECTED = 'mullvad-connected-symbolic';
 const ICON_DISCONNECTED = 'mullvad-disconnected-symbolic';
 
 // Singleton sessions
-let _httpSession = new Soup.SessionAsync();
-Soup.Session.prototype.add_feature.call(_httpSession, new Soup.ProxyResolverDefault());
-_httpSession.timeout = 10;
+//let _httpSession = new Soup.Session();
+//Soup.Session.prototype.add_feature.call(_httpSession, new Soup.ProxyResolverDefault());
+//_httpSession.timeout = 10;
 let dbusProxy = DBus.networkManagerProxyCreate();
 
 const MullvadIndicator = GObject.registerClass({
@@ -44,14 +45,17 @@ const MullvadIndicator = GObject.registerClass({
         // Connecting to DBus signals related to network changes
         dbusProxy.connectSignal("DeviceAdded", function(proxy) {
             global.log('-~-~- DeviceAdded signal-~-~- ');
+            GLib.spawn_command_line_sync('sleep 2');
             this._refresh();
         }.bind(this));
         dbusProxy.connectSignal("DeviceRemoved", function(proxy) {
             global.log('-~-~- DeviceRemoved signal-~-~- ');
+            GLib.spawn_command_line_sync('sleep 2');
             this._refresh();
         }.bind(this));
         dbusProxy.connectSignal("StateChanged", function(proxy) {
             global.log('-~-~- StateChanged signal-~-~- ');
+            GLib.spawn_command_line_sync('sleep 2');
             this._refresh();
         }.bind(this));
 
@@ -65,57 +69,41 @@ const MullvadIndicator = GObject.registerClass({
 
     _forceUpdate() {
         this._initConnStatus();
-        this._fetchConnectionInfo(function(status_code, response) {
-            this._checkIfStatusChanged(status_code, response);
-        }.bind(this));
+        this._fetchConnectionInfo();
     }
 
     _refresh() {
         global.log('entered timed refresh');
-        this._fetchConnectionInfo(function(status_code, response) {
-            global.log('in refresh lamba');
-            this._checkIfStatusChanged(status_code, response);
-        }.bind(this));
+        this._fetchConnectionInfo();
         if (this._timeout) {
             Mainloop.source_remove(this._timeout);
-            this._timeout = null;
+            this._timeout = -1;
         }
-        this._timeout = Mainloop.timeout_add_seconds(60, function () {
+        this._timeout = Mainloop.timeout_add_seconds(100, function () {
             this._refresh();
         }.bind(this));
     }
 
-    _fetchConnectionInfo(callback) {
+    _fetchConnectionInfo() {
+        let _httpSession = new Soup.Session();
+        Soup.Session.prototype.add_feature.call(_httpSession, new Soup.ProxyResolverDefault());
+        _httpSession.timeout = 30;
         let message = Soup.Message.new('GET', API_URL);
         // Fake CURL to prevent 403
         message.request_headers.append('User-Agent', 'curl/7.68.0');
         message.request_headers.append('Accept', '*/*');
         global.log('sending http request');
-        _httpSession.queue_message(message, function (_httpSession, message) {
-            if (message.status_code !== 200) {
-                global.log('callback without response');
-                let responseJSON = message.response_body.data;
-                let response = JSON.parse(JSON.stringify(responseJSON));
-                global.log('response');
-                global.log(`${response}`);
-                callback(message.status_code, null);
-                return;
-            }
-            let responseJSON = message.response_body.data;
-            let response = JSON.parse(JSON.stringify(responseJSON));
-            global.log('callback with response');
-            global.log(`${response}`);
-            callback(null, response);
-        });
+        _httpSession.queue_message(message, function (session, message) {
+            let response = JSON.parse(JSON.stringify(message.response_body.data));
+            global.log(`HTTP RESPONSE: ${response}`);
+            this._checkIfStatusChanged(JSON.parse(response));
+        }.bind(this));
     }
 
-    _checkIfStatusChanged(status_code, api_response) {
+    _checkIfStatusChanged(api_response) {
         // if api_response is null we want to assume we're disconnected
         global.log('in status check!');
         global.log(`${api_response}`);
-        api_response = JSON.parse(api_response);
-        global.log(`${api_response}`);
-        global.log(`status_code ${status_code}`);
         if (!api_response) {
             global.log('something failed :(!');
             this._connected = false;
