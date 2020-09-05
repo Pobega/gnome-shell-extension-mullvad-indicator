@@ -114,6 +114,7 @@ function updateTrayIcon(object, relative_path) {
 }
 
 function update(object, items_to_show) {
+    global.log(items_to_show);
     // Destroy current inner text boxes
     object.vpnInfoBox.destroy_all_children();
 

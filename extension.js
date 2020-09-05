@@ -12,7 +12,7 @@ const PanelMenu = imports.ui.panelMenu;
 
 const API_URL = 'https://am.i.mullvad.net/json';
 
-const DEFAULT_DATA = {
+const DEFAULT_ITEMS = {
     server: {name: _('Server'), text: ''},
     country: {name: _('Country'), text: ''},
     city: {name: _('City'), text: ''},
@@ -59,7 +59,7 @@ const MullvadIndicator = GObject.registerClass({
 
     _initConnStatus() {
         // We use JSON here to 'clone' from our default Object
-        this._connStatus = JSON.parse(JSON.stringify(DEFAULT_DATA));
+        this._connStatus = JSON.parse(JSON.stringify(DEFAULT_ITEMS));
         this._connected = false;
     }
 
@@ -113,7 +113,7 @@ const MullvadIndicator = GObject.registerClass({
         // if api_response is null we want to assume we're disconnected
         if (!api_response) {
             this._connected = false;
-            Gui.update(this);
+            Gui.update(this, DEFAULT_ITEMS);
             return
         }
 
@@ -130,7 +130,7 @@ const MullvadIndicator = GObject.registerClass({
             this._connStatus.type.text = api_response.mullvad_server_type;
 
             // Tell the GUI to redraw
-            Gui.update(this);
+            Gui.update(this, DEFAULT_ITEMS);
         }
     }
 
