@@ -54,7 +54,7 @@ const MullvadIndicator = GObject.registerClass({
             Mainloop.source_remove(this._timeout);
             this._timeout = -1;
         }
-        this._timeout = Mainloop.timeout_add_seconds(20, function () {
+        this._timeout = Mainloop.timeout_add_seconds(600, function () {
             this._refresh();
         }.bind(this));
     }
