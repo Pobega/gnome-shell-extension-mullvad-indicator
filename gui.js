@@ -8,6 +8,7 @@ const Main = imports.ui.main;
 const Mainloop = imports.mainloop;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
+const Util = imports.misc.util;
 
 const ICON_CONNECTED = 'mullvad-connected-symbolic';
 const ICON_DISCONNECTED = 'mullvad-disconnected-symbolic';
