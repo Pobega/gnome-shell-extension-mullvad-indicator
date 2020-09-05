@@ -3,7 +3,6 @@ const Gio = imports.gi.Gio;
 const St = imports.gi.St;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Defaults = Me.imports.defaults;
 
 const Main = imports.ui.main;
 const Mainloop = imports.mainloop;
@@ -113,7 +112,7 @@ function updateTrayIcon(object, relative_path) {
     object._icon.gicon = Gio.icon_new_for_string(`${Me.path}/icons/${relative_path}.svg`);
 }
 
-function update(object) {
+function update(object, items_to_show) {
     // Destroy current inner text boxes
     object.vpnInfoBox.destroy_all_children();
 
@@ -152,14 +151,14 @@ function update(object) {
         return;
     }
 
-    for (let key in Defaults.DEFAULT_DATA) {
-        if (object._connStatus[key]) {
+    for (let item in items_to_show) {
+        if (object._connStatus[item]) {
             let vpnInfoRow = new St.BoxLayout();
             object.vpnInfoBox.add_actor(vpnInfoRow);
 
             let label = new St.Label({
-                style_class: 'vpn-info-key',
-                text: `${_(Defaults.DEFAULT_DATA[key].name)}: `,
+                style_class: 'vpn-info-item',
+                text: `${_(items_to_show[item].name)}: `,
                 y_align: Clutter.ActorAlign.CENTER,
                 y_expand: true,
             });
@@ -167,7 +166,7 @@ function update(object) {
 
             let infoLabel = new St.Label({
                 style_class: 'vpn-info-value',
-                text: object._connStatus[key].text || '',
+                text: object._connStatus[item].text || '',
                 y_align: Clutter.ActorAlign.CENTER,
                 y_expand: true,
             });

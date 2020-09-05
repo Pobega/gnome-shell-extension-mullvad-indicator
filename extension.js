@@ -4,13 +4,21 @@ const Soup = imports.gi.Soup;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Gui = Me.imports.gui;
-const Defaults = Me.imports.defaults;
 
 const Main = imports.ui.main;
 const Mainloop = imports.mainloop;
 const PanelMenu = imports.ui.panelMenu;
 
+
 const API_URL = 'https://am.i.mullvad.net/json';
+
+const DEFAULT_DATA = {
+    server: {name: _('Server'), text: ''},
+    country: {name: _('Country'), text: ''},
+    city: {name: _('City'), text: ''},
+    ip: {name: _('IP Address'), text: _('')},
+    type: {name: _('VPN Type'), text: ''},
+};
 
 const ICON_CONNECTED = 'mullvad-connected-symbolic';
 const ICON_DISCONNECTED = 'mullvad-disconnected-symbolic';
@@ -51,7 +59,7 @@ const MullvadIndicator = GObject.registerClass({
 
     _initConnStatus() {
         // We use JSON here to 'clone' from our default Object
-        this._connStatus = JSON.parse(JSON.stringify(Defaults.DEFAULT_DATA));
+        this._connStatus = JSON.parse(JSON.stringify(DEFAULT_DATA));
         this._connected = false;
     }
 
