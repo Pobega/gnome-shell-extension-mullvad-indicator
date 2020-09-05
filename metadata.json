@@ -1,5 +1,5 @@
 {
-  "name": "Am I Mullvad?",
+  "name": "Am I Mullvad",
   "description": "am.i.mullvad.net systray indicator",
   "uuid": "amimullvad@pobega.github.com",
   "shell-version": [
