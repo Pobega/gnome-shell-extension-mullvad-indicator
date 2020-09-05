@@ -4,7 +4,6 @@ const Gio = imports.gi.Gio;
 const Soup = imports.gi.Soup;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const DBus = Me.imports.dbus;
 const Gui = Me.imports.gui;
 const Defaults = Me.imports.defaults;
 
@@ -17,11 +16,7 @@ const API_URL = 'https://am.i.mullvad.net/json';
 const ICON_CONNECTED = 'mullvad-connected-symbolic';
 const ICON_DISCONNECTED = 'mullvad-disconnected-symbolic';
 
-// Singleton sessions
-//let _httpSession = new Soup.Session();
-//Soup.Session.prototype.add_feature.call(_httpSession, new Soup.ProxyResolverDefault());
-//_httpSession.timeout = 10;
-let dbusProxy = DBus.networkManagerProxyCreate();
+let NETWORK_MONITOR = Gio.NetworkMonitor.get_default();
 
 const MullvadIndicator = GObject.registerClass({
     GTypeName: 'MullvadIndicator',
@@ -32,33 +27,14 @@ const MullvadIndicator = GObject.registerClass({
 
         this._initConnStatus();
 
-        this._initDbusSignals();
+        NETWORK_MONITOR.connect('network-changed', function() {
+            this._fetchConnectionInfo();
+        }.bind(this));
 
         Gui.init(this);
 
         // Start the refresh Mainloop
         this._refresh();
-    }
-
-
-    _initDbusSignals() {
-        // Connecting to DBus signals related to network changes
-        dbusProxy.connectSignal("DeviceAdded", function(proxy) {
-            global.log('-~-~- DeviceAdded signal-~-~- ');
-            GLib.spawn_command_line_sync('sleep 2');
-            this._refresh();
-        }.bind(this));
-        dbusProxy.connectSignal("DeviceRemoved", function(proxy) {
-            global.log('-~-~- DeviceRemoved signal-~-~- ');
-            GLib.spawn_command_line_sync('sleep 2');
-            this._refresh();
-        }.bind(this));
-        dbusProxy.connectSignal("StateChanged", function(proxy) {
-            global.log('-~-~- StateChanged signal-~-~- ');
-            GLib.spawn_command_line_sync('sleep 2');
-            this._refresh();
-        }.bind(this));
-
     }
 
     _initConnStatus() {
@@ -79,7 +55,8 @@ const MullvadIndicator = GObject.registerClass({
             Mainloop.source_remove(this._timeout);
             this._timeout = -1;
         }
-        this._timeout = Mainloop.timeout_add_seconds(600, function () {
+        this._timeout = Mainloop.timeout_add_seconds(20, function () {
+            global.log("  -- hit timeout, refreshing --  ");
             this._refresh();
         }.bind(this));
     }

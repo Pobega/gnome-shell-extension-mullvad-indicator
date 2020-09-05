@@ -1,9 +1,0 @@
-DeviceAdded, DeviceRemoved, StateChanged
-dbus-monitor --system "interface='org.freedesktop.NetworkManager'"
-
-
-signal time=1599251536.185978 sender=:1.15 -> destination=(null destination) serial=1392959 path=/org/freedesktop/NetworkManager; interface=org.freedesktop.NetworkManager; member=DeviceAdded
-
-signal time=1599251611.333577 sender=:1.15 -> destination=(null destination) serial=1395633 path=/org/freedesktop/NetworkManager; interface=org.freedesktop.NetworkManager; member=DeviceRemoved
-
-signal time=1599251600.101018 sender=:1.15 -> destination=(null destination) serial=1395405 path=/org/freedesktop/NetworkManager; interface=org.freedesktop.NetworkManager; member=StateChanged
