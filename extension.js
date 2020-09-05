@@ -27,7 +27,7 @@ const MullvadIndicator = GObject.registerClass({
 
         this._initConnStatus();
 
-        NETWORK_MONITOR.connect('network-changed', function() {
+        NETWORK_MONITOR.connect('network-changed', function () {
             this._fetchConnectionInfo();
         }.bind(this));
 
@@ -56,7 +56,7 @@ const MullvadIndicator = GObject.registerClass({
             this._timeout = -1;
         }
         this._timeout = Mainloop.timeout_add_seconds(20, function () {
-            global.log("  -- hit timeout, refreshing --  ");
+            global.log('  -- hit timeout, refreshing --  ');
             this._refresh();
         }.bind(this));
     }
@@ -85,7 +85,7 @@ const MullvadIndicator = GObject.registerClass({
             global.log('something failed :(!');
             this._connected = false;
             Gui.update(this);
-            return
+            return;
         }
         global.log(`exit ip ${api_response.mullvad_exit_ip}`);
         // Only update if our status has changed

@@ -24,18 +24,18 @@ function init(object) {
 
     // Popup menu
     let popupMenu = new PopupMenu.PopupMenuSection();
-    object.menu.box.style = "padding: 16px;";
+    object.menu.box.style = 'padding: 16px;';
     let parentContainer = new St.BoxLayout({
         x_align: Clutter.ActorAlign.FILL,
         x_expand: true,
-        style: "padding-bottom: 12px;"
+        style: 'padding-bottom: 12px;',
     });
     // End popup menu
 
     // Highest level text box
     object.vpnInfoBox = new St.BoxLayout({
         style_class: 'vpn-info-box',
-        vertical: true ,
+        vertical: true,
     });
     parentContainer.add_actor(object.vpnInfoBox);
     popupMenu.actor.add(parentContainer);
@@ -46,28 +46,28 @@ function init(object) {
     let buttonBox = new St.BoxLayout();
     object._settingsIcon = new St.Icon({
         icon_name: 'emblem-system-symbolic',
-        style_class: 'popup-menu-icon'
+        style_class: 'popup-menu-icon',
     });
     object._settingsButton = new St.Button({
         child: object._settingsIcon,
-        style_class: 'button'
+        style_class: 'button',
     });
-    object._settingsButton.connect('clicked',  ()=> Util.spawnCommandLine('gnome-extensions prefs amimullvad@pobega.github.com'));
+    object._settingsButton.connect('clicked',  () => Util.spawnCommandLine('gnome-extensions prefs amimullvad@pobega.github.com'));
     buttonBox.add_actor(object._settingsButton);
     // End settings button
 
     // Refresh button
     object._refreshIcon = new St.Icon({
         icon_name: 'view-refresh-symbolic',
-        style_class: 'popup-menu-icon'
+        style_class: 'popup-menu-icon',
     });
     object._refreshButton = new St.Button({
         child: object._refreshIcon,
         x_expand: true,
         x_align: Clutter.ActorAlign.END,
-        style_class: 'button'
+        style_class: 'button',
     });
-    object._refreshButton.connect('clicked',  ()=> {
+    object._refreshButton.connect('clicked',  () => {
         object._forceUpdate();
     });
     buttonBox.add_actor(object._refreshButton);
@@ -88,7 +88,7 @@ function init(object) {
 
     let label = new St.Label({
         style_class: 'vpn-info-vpn-init',
-        text: _("Mullvad") + ': ',
+        text: `${_('Mullvad')}: `,
         x_align: Clutter.ActorAlign.CENTER,
         x_expand: true,
     });
@@ -125,7 +125,7 @@ function update(object) {
 
     let label = new St.Label({
         style_class: object._connected ? 'vpn-info-vpn-on' : 'vpn-info-vpn-off',
-        text: _("Mullvad") + ': ',
+        text: `${_('Mullvad')}: `,
         x_align: Clutter.ActorAlign.CENTER,
         x_expand: true,
     });
@@ -152,14 +152,14 @@ function update(object) {
         return;
     }
 
-    for(let key in Defaults.DEFAULT_DATA){
-        if(object._connStatus[key]){
+    for (let key in Defaults.DEFAULT_DATA) {
+        if (object._connStatus[key]) {
             let vpnInfoRow = new St.BoxLayout();
             object.vpnInfoBox.add_actor(vpnInfoRow);
 
             let label = new St.Label({
                 style_class: 'vpn-info-key',
-                text: _(Defaults.DEFAULT_DATA[key].name) + ': ',
+                text: `${_(Defaults.DEFAULT_DATA[key].name)}: `,
                 y_align: Clutter.ActorAlign.CENTER,
                 y_expand: true,
             });
