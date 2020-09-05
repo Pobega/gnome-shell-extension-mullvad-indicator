@@ -49,14 +49,12 @@ const MullvadIndicator = GObject.registerClass({
     }
 
     _refresh() {
-        global.log('entered timed refresh');
         this._fetchConnectionInfo();
         if (this._timeout) {
             Mainloop.source_remove(this._timeout);
             this._timeout = -1;
         }
         this._timeout = Mainloop.timeout_add_seconds(20, function () {
-            global.log('  -- hit timeout, refreshing --  ');
             this._refresh();
         }.bind(this));
     }
@@ -69,31 +67,24 @@ const MullvadIndicator = GObject.registerClass({
         // Fake CURL to prevent 403
         message.request_headers.append('User-Agent', 'curl/7.68.0');
         message.request_headers.append('Accept', '*/*');
-        global.log('sending http request');
         _httpSession.queue_message(message, function (session, message) {
             let response = JSON.parse(JSON.stringify(message.response_body.data));
-            global.log(`HTTP RESPONSE: ${response}`);
             this._checkIfStatusChanged(JSON.parse(response));
         }.bind(this));
     }
 
     _checkIfStatusChanged(api_response) {
         // if api_response is null we want to assume we're disconnected
-        global.log('in status check!');
-        global.log(`${api_response}`);
         if (!api_response) {
-            global.log('something failed :(!');
             this._connected = false;
             Gui.update(this);
             return;
         }
-        global.log(`exit ip ${api_response.mullvad_exit_ip}`);
         // Only update if our status has changed
         if (this._connected !== api_response.mullvad_exit_ip ||
             this._connStatus.ip.text !== api_response.ip ||
             this._connStatus.server.text !== api_response.mullvad_exit_ip_hostname) {
             // Overwrite all values with the API response
-            global.log('overwriting values :)');
             this._connected = api_response.mullvad_exit_ip;
             this._connStatus.ip.text = api_response.ip;
             this._connStatus.server.text = api_response.mullvad_exit_ip_hostname;
@@ -104,7 +95,6 @@ const MullvadIndicator = GObject.registerClass({
             // Tell the GUI to redraw
             Gui.update(this);
         }
-        global.log('nothing changed?');
     }
 
     stop() {
