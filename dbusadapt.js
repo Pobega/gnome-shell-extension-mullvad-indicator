@@ -26,15 +26,19 @@ let nmProxy = new NetworkManagerProxy(
     "/org/freedesktop/NetworkManager"
 );
 
+function printSignal(signal) {
+    print(`${signal} signal emitted`);
+}
+
 // Connecting to a D-Bus signal
 nmProxy.connectSignal("DeviceRemoved", function(proxy) {
-    print("DeviceRemove signal emitted");
+    printSignal("DeviceRemoved");
 });
 nmProxy.connectSignal("DeviceAdded", function(proxy) {
-    print("DeviceAdded signal emitted");
+    printSignal("DeviceAdded");
 });
 nmProxy.connectSignal("StateChanged", function(proxy) {
-    print("StateChanged signal emitted");
+    printSignal("StateChanged");
 });
 
 let loop = new GLib.MainLoop(null, false);
