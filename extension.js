@@ -113,7 +113,7 @@ const MullvadIndicator = GObject.registerClass({
         // if api_response is null we want to assume we're disconnected
         if (!api_response) {
             this._connected = false;
-            Gui.update(this, this._applyDisplaySettings());
+            Gui.update(this, this._applyDisplaySettingsFilter());
             return
         }
 
@@ -130,7 +130,7 @@ const MullvadIndicator = GObject.registerClass({
             this._connStatus.type.text = api_response.mullvad_server_type;
 
             // Tell the GUI to redraw
-            Gui.update(this, this._applyDisplaySettings());
+            Gui.update(this, this._applyDisplaySettingsFilter());
         }
     }
 
@@ -148,8 +148,9 @@ const MullvadIndicator = GObject.registerClass({
     }
 
 
-    // Remove items the user opts not to see
-    _applyDisplaySettings() {
+    // Return a copy of this._connStatus with the items the user
+    // opts not to see removed, for passing to Gui.update()
+    _applyDisplaySettingsFilter() {
         let settings = getSettings();
         let displaySettings = {}
         if (settings.get_boolean('show-server'))
