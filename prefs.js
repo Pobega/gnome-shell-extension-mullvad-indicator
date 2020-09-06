@@ -1,6 +1,4 @@
-const GObject = imports.gi.GObject;
-imports.gi.versions.Gtk = '3.0';
-const Gtk = imports.gi.Gtk;
+const { Gio, GObject, Gtk } = imports.gi;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Extension = ExtensionUtils.getCurrentExtension();
@@ -8,25 +6,19 @@ const Extension = ExtensionUtils.getCurrentExtension();
 function init() {
 }
 
-function buildPrefsWidget() {
-    let widget = new AmIMullvadPrefsWidget();
-    widget.show_all();
-    return widget;
-}
-
-const AmIMullvadPrefsWidget = new GObject.Class({
-    Name: 'AmIMullvad.Prefs.Widget',
-    GTypeName: 'AmIMullvadPrefsWidget',
-    Extends: Gtk.Box,
-
-    _init(params) {
+const AmIMullvadPrefsWidget = GObject.registerClass(
+class AmIMullvadPrefsWidget extends Gtk.Box {
+    _init() {
+        super._init({
+            orientation: Gtk.Orientation.VERTICAL,
+            spacing: 12,
+            margin_top: 36,
+            margin_bottom: 36,
+            margin_start: 36,
+            margin_end: 36,
+        });
 
         this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.amimullvad');
-
-        this.parent(params);
-        this.margin = 20;
-        this.set_spacing(15);
-        this.set_orientation(Gtk.Orientation.VERTICAL);
 
         let refreshTimeLabel = new Gtk.Label({
             label: 'Automatic refresh time (in seconds)',
@@ -38,9 +30,7 @@ const AmIMullvadPrefsWidget = new GObject.Class({
         spinButton.set_value(this._settings.get_int('refresh-time'));
         spinButton.set_increments(10, 10);
 
-        spinButton.connect("value-changed", function (value) {
-            this._settings.set_int('refresh-time', value.get_value_as_int());
-        }.bind(this));
+        this._settings.bind('refresh-time', spinButton, 'value', Gio.SettingsBindFlags.DEFAULT);
 
         let hBox = new Gtk.Box();
         hBox.set_orientation(Gtk.Orientation.HORIZONTAL);
@@ -49,5 +39,41 @@ const AmIMullvadPrefsWidget = new GObject.Class({
         hBox.pack_end(spinButton, false, false, 0);
 
         this.add(hBox);
-    },
+
+        let check = new Gtk.CheckButton({
+            label: 'Show currently connected server',
+        });
+        this._settings.bind('show-server', check, 'active', Gio.SettingsBindFlags.DEFAULT);
+        this.add(check);
+
+        check = new Gtk.CheckButton({
+            label: 'Show currently connected servers country',
+        });
+        this._settings.bind('show-country', check, 'active', Gio.SettingsBindFlags.DEFAULT);
+        this.add(check);
+
+        check = new Gtk.CheckButton({
+            label: 'Show currently connected servers city',
+        });
+        this._settings.bind('show-city', check, 'active', Gio.SettingsBindFlags.DEFAULT);
+        this.add(check);
+
+        check = new Gtk.CheckButton({
+            label: 'Show your current IP address',
+        });
+        this._settings.bind('show-ip', check, 'active', Gio.SettingsBindFlags.DEFAULT);
+        this.add(check);
+
+        check = new Gtk.CheckButton({
+            label: 'Show your VPN type (WireGuard/OpenVPN)',
+        });
+        this._settings.bind('show-type', check, 'active', Gio.SettingsBindFlags.DEFAULT);
+        this.add(check);
+
+        this.show_all();
+    }
 });
+
+function buildPrefsWidget() {
+    return new AmIMullvadPrefsWidget;
+}
