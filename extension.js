@@ -16,7 +16,7 @@ const DEFAULT_ITEMS = {
     server: {name: _('Server'), text: ''},
     country: {name: _('Country'), text: ''},
     city: {name: _('City'), text: ''},
-    ip: {name: _('IP Address'), text: _('')},
+    ip: {name: _('IP Address'), text: ''},
     type: {name: _('VPN Type'), text: ''},
 };
 
@@ -113,7 +113,7 @@ const MullvadIndicator = GObject.registerClass({
         // if api_response is null we want to assume we're disconnected
         if (!api_response) {
             this._connected = false;
-            Gui.update(this, DEFAULT_ITEMS);
+            Gui.update(this, this._applyDisplaySettings());
             return
         }
 
@@ -130,7 +130,7 @@ const MullvadIndicator = GObject.registerClass({
             this._connStatus.type.text = api_response.mullvad_server_type;
 
             // Tell the GUI to redraw
-            Gui.update(this, DEFAULT_ITEMS);
+            Gui.update(this, this._applyDisplaySettings());
         }
     }
 
@@ -141,12 +141,29 @@ const MullvadIndicator = GObject.registerClass({
             Mainloop.source_remove(this._timeout);
             this._timeout = null;
         }
-        let _refreshTime = getSettings().get_int('refresh-time');
-        this._timeout = Mainloop.timeout_add_seconds(_refreshTime, function () {
+        let refreshTime = getSettings().get_int('refresh-time');
+        this._timeout = Mainloop.timeout_add_seconds(refreshTime, function () {
             this._refresh();
         }.bind(this));
     }
 
+
+    // Remove items the user opts not to see
+    _applyDisplaySettings() {
+        let settings = getSettings();
+        let displaySettings = {}
+        if (settings.get_boolean('show-server'))
+            displaySettings.server = this._connStatus.server;
+        if (settings.get_boolean('show-country'))
+            displaySettings.country = this._connStatus.country;
+        if (settings.get_boolean('show-city'))
+            displaySettings.city = this._connStatus.city;
+        if (settings.get_boolean('show-ip'))
+            displaySettings.ip = this._connStatus.ip;
+        if (settings.get_boolean('show-type'))
+            displaySettings.type = this._connStatus.type;
+        return displaySettings;
+    }
 
     stop() {
         // Kill our mainloop when we shut down
