@@ -1,38 +1,21 @@
+const {Clutter, GObject, Gio, St} = imports.gi;
 const Gettext = imports.gettext;
-const {GObject, Gio, Soup} = imports.gi;
 const Mainloop = imports.mainloop;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Gui = Me.imports.gui;
+const Mullvad = Me.imports.mullvad;
 
+const Main = imports.ui.main;
 const PanelMenu = imports.ui.panelMenu;
-
+const PopupMenu = imports.ui.popupMenu;
+const Util = imports.misc.util;
 
 Gettext.bindtextdomain('mullvadindicator', Me.dir.get_child('locale').get_path());
 Gettext.textdomain('mullvadindicator');
 const _ = Gettext.gettext;
 
-const DEFAULT_ITEMS = {
-    server: {name: _('Server'), text: ''},
-    country: {name: _('Country'), text: ''},
-    city: {name: _('City'), text: ''},
-    ip: {name: _('IP Address'), text: ''},
-    type: {name: _('VPN Type'), text: ''},
-};
-
-const networkMonitor = Gio.NetworkMonitor.get_default();
-
-const httpSession = new Soup.SessionAsync();
-Soup.Session.prototype.add_feature.call(httpSession, new Soup.ProxyResolverDefault());
-httpSession.timeout = 5;
-const request = new Soup.Message({
-    method: 'GET',
-    uri: Soup.URI.new('https://am.i.mullvad.net/json'),
-});
-// Fake CURL to prevent 403
-request.request_headers.append('User-Agent', 'curl/7.68.0');
-request.request_headers.append('Accept', '*/*');
-
+const ICON_CONNECTED = 'mullvad-connected-symbolic';
+const ICON_DISCONNECTED = 'mullvad-disconnected-symbolic';
 
 const MullvadIndicator = GObject.registerClass({
     GTypeName: 'MullvadIndicator',
@@ -41,127 +24,198 @@ const MullvadIndicator = GObject.registerClass({
     _init() {
         super._init(0);
 
-        this._initConnStatus();
+        this.mullvad = new Mullvad.MullvadVPN();
 
-        this._connectNetworkSignals();
+        this._initGui();
 
-        Gui.init(this);
-
-        // Start the refresh Mainloop
-        this._refresh();
-    }
-
-
-    _connectNetworkSignals() {
-        // Refresh our status when a network event occurs
-        networkMonitor.connect('network-changed', function () {
-            this._forceUpdate();
-        }.bind(this));
-    }
-
-
-    _initConnStatus() {
-        // We use JSON here to 'clone' from our default Object
-        this._connStatus = JSON.parse(JSON.stringify(DEFAULT_ITEMS));
-        this._connected = false;
-    }
-
-
-    _forceUpdate() {
-        this._initConnStatus();
-        this._update();
-    }
-
-
-    // Caller for fetchConnectionInfo that passes the callback
-    _update() {
-        this._fetchConnectionInfo(function (status_code, response) {
-            this._checkIfStatusChanged(status_code, response);
-        }.bind(this));
-    }
-
-
-    // Use our Soup.Session to ping am.i.mullvad.net
-    _fetchConnectionInfo(callback) {
-
-        // Exit early and return null values if we're explicitly not connected
-        if (networkMonitor.connectivity !== Gio.NetworkConnectivity.FULL)
-            callback(null, null, null);
-
-        httpSession.queue_message(request, function (session, message) {
-            if (message.status_code !== 200) {
-                callback(message.status_code, null);
-                return;
-            }
-            const responseJSON = message.response_body.data;
-            const response = JSON.parse(JSON.stringify(responseJSON));
-            callback(null, response);
+        this.watch = this.mullvad.connect('status-changed', (mullvad) => {
+            global.log("Caught signal");
+            this.update();
         });
+
+        this.main();
     }
 
+    _initGui() {
+        // Taskbar icon
+        this._icon = new St.Icon({
+            style_class: 'system-status-icon',
+        });
+        this._updateTrayIcon(ICON_DISCONNECTED);
+        this.add_child(this._icon);
+        // End taskbar icon
 
-    _checkIfStatusChanged(status_code, api_response) {
-        // Unsure why I need to JSON.parse this again but whatever
-        api_response = JSON.parse(api_response);
+        // Popup menu
+        let popupMenu = new PopupMenu.PopupMenuSection();
+        this.menu.box.style = 'padding: 16px;';
+        let parentContainer = new St.BoxLayout({
+            x_align: Clutter.ActorAlign.FILL,
+            x_expand: true,
+            style: 'padding-bottom: 12px;',
+        });
+        // End popup menu
 
-        // Don't do anything if our GET failed
-        if (status_code === Soup.KnownStatusCode.IO_ERROR)
-            return;
+        // Highest level text box
+        this.vpnInfoBox = new St.BoxLayout({
+            style_class: 'vpn-info-box',
+            vertical: true,
+        });
+        parentContainer.add_actor(this.vpnInfoBox);
+        popupMenu.actor.add(parentContainer);
+        this.menu.addMenuItem(popupMenu);
+        // End highest level text box
 
-        // if api_response is null we want to assume we're disconnected
-        if (!api_response) {
-            this._connected = false;
-            Gui.update(this, this._applyDisplaySettingsFilter());
+        // Settings button
+        let buttonBox = new St.BoxLayout();
+        this._settingsIcon = new St.Icon({
+            icon_name: 'emblem-system-symbolic',
+            style_class: 'popup-menu-icon',
+        });
+        this._settingsButton = new St.Button({
+            child: this._settingsIcon,
+            style_class: 'button',
+        });
+        this._settingsButton.connect('clicked',  () => Util.spawnCommandLine('gnome-extensions prefs mullvadindicator@pobega.github.com'));
+        buttonBox.add_actor(this._settingsButton);
+        // End settings button
+
+        // Refresh button
+        this._refreshIcon = new St.Icon({
+            icon_name: 'view-refresh-symbolic',
+            style_class: 'popup-menu-icon',
+        });
+        this._refreshButton = new St.Button({
+            child: this._refreshIcon,
+            x_expand: true,
+            x_align: Clutter.ActorAlign.END,
+            style_class: 'button',
+        });
+        this._refreshButton.connect('clicked',  () => {
+            this.mullvad.forceUpdate();
+        });
+        buttonBox.add_actor(this._refreshButton);
+        // End refresh button
+
+        popupMenu.actor.add(parentContainer);
+        popupMenu.actor.add_actor(buttonBox);
+        this.menu.addMenuItem(popupMenu);
+
+        Main.panel.addToStatusArea('MullvadIndicator', this, 1);
+
+        // Initial state
+        let vpnInfoRow = new St.BoxLayout({
+            x_align: Clutter.ActorAlign.START,
+            x_expand: true,
+        });
+        this.vpnInfoBox.add_actor(vpnInfoRow);
+
+        let label = new St.Label({
+            style_class: 'vpn-info-vpn-init',
+            text: 'Mullvad: ',
+            x_align: Clutter.ActorAlign.CENTER,
+            x_expand: true,
+        });
+        vpnInfoRow.add_actor(label);
+
+        let vpnLabel = new St.Label({
+            style_class: 'vpn-info-vpn-init',
+            text: _('Checking...'),
+        });
+        vpnInfoRow.add_actor(vpnLabel);
+
+        let vpnIcon = new St.Icon({
+            icon_name: 'emblem-synchronizing-symbolic',
+            style_class: 'popup-menu-icon vpn-icon-vpn-init',
+        });
+        vpnInfoRow.add_actor(vpnIcon);
+
+        this.vpnInfoBox.add_actor(new PopupMenu.PopupSeparatorMenuItem());
+    }
+
+    _updateTrayIcon(relative_path) {
+        this._icon.gicon = Gio.icon_new_for_string(`${Me.path}/assets/icons/${relative_path}.svg`);
+    }
+
+    update() {
+        // Destroy current inner text boxes
+        this.vpnInfoBox.destroy_all_children();
+
+        let vpnInfoRow = new St.BoxLayout({
+            x_align: Clutter.ActorAlign.START,
+            x_expand: true,
+        });
+        this.vpnInfoBox.add_actor(vpnInfoRow);
+
+        let connected = this.mullvad.connected;
+
+        let label = new St.Label({
+            style_class: connected ? 'vpn-info-vpn-on' : 'vpn-info-vpn-off',
+            text: 'Mullvad: ',
+            x_align: Clutter.ActorAlign.CENTER,
+            x_expand: true,
+        });
+        vpnInfoRow.add_actor(label);
+
+        let vpnLabel = new St.Label({
+            style_class: connected ? 'vpn-info-vpn-on' : 'vpn-info-vpn-off',
+            text: connected ? _('Connected') : _('Disconnected'),
+        });
+        vpnInfoRow.add_actor(vpnLabel);
+
+        let vpnIcon = new St.Icon({
+            icon_name: connected ? 'security-high-symbolic' : 'security-low-symbolic',
+            style_class: connected ? 'popup-menu-icon vpn-icon-vpn-on' : 'popup-menu-icon vpn-icon-vpn-off',
+        });
+        vpnInfoRow.add_actor(vpnIcon);
+
+        this.vpnInfoBox.add_actor(new PopupMenu.PopupSeparatorMenuItem());
+
+        if (connected === true) {
+            this._updateTrayIcon(ICON_CONNECTED);
+        } else {
+            this._updateTrayIcon(ICON_DISCONNECTED);
             return;
         }
 
-        // Only update if our status has changed
-        if (this._connected !== api_response.mullvad_exit_ip ||
-            this._connStatus.ip.text !== api_response.ip ||
-            this._connStatus.server.text !== api_response.mullvad_exit_ip_hostname) {
-            // Overwrite all values with the API response
-            this._connected = api_response.mullvad_exit_ip;
-            this._connStatus.ip.text = api_response.ip;
-            this._connStatus.server.text = api_response.mullvad_exit_ip_hostname;
-            this._connStatus.city.text = api_response.city;
-            this._connStatus.country.text = api_response.country;
-            this._connStatus.type.text = api_response.mullvad_server_type;
+        let detailed_status = this.mullvad.detailed_status;
 
-            // Tell the GUI to redraw
-            Gui.update(this, this._applyDisplaySettingsFilter());
+        for (let item in detailed_status) {
+            if (detailed_status[item]) {
+                vpnInfoRow = new St.BoxLayout();
+                this.vpnInfoBox.add_actor(vpnInfoRow);
+
+                label = new St.Label({
+                    style_class: 'vpn-info-item',
+                    text: `${_(detailed_status[item].name)}: `,
+                    y_align: Clutter.ActorAlign.CENTER,
+                    y_expand: true,
+                });
+                vpnInfoRow.add_actor(label);
+
+                let infoLabel = new St.Label({
+                    style_class: 'vpn-info-value',
+                    text: detailed_status[item].text || '',
+                    y_align: Clutter.ActorAlign.CENTER,
+                    y_expand: true,
+                });
+                let dataLabelBtn = new St.Button({
+                    child: infoLabel,
+                });
+                vpnInfoRow.add_actor(dataLabelBtn);
+            }
         }
     }
 
-
-    _refresh() {
-        this._update();
+    main() {
+        this.mullvad.pollMullvad();
         if (this._timeout) {
             Mainloop.source_remove(this._timeout);
             this._timeout = null;
         }
         const refreshTime = getSettings().get_int('refresh-time');
         this._timeout = Mainloop.timeout_add_seconds(refreshTime, function () {
-            this._refresh();
+            this.main();
         }.bind(this));
-    }
-
-
-    // Return a copy of this._connStatus with the items the user
-    // opts not to see removed, for passing to Gui.update()
-    _applyDisplaySettingsFilter() {
-        const settings = getSettings();
-        const displaySettings = {};
-        if (settings.get_boolean('show-server'))
-            displaySettings.server = this._connStatus.server;
-        if (settings.get_boolean('show-country'))
-            displaySettings.country = this._connStatus.country;
-        if (settings.get_boolean('show-city'))
-            displaySettings.city = this._connStatus.city;
-        if (settings.get_boolean('show-ip'))
-            displaySettings.ip = this._connStatus.ip;
-        if (settings.get_boolean('show-type'))
-            displaySettings.type = this._connStatus.type;
-        return displaySettings;
     }
 
     stop() {
@@ -170,7 +224,6 @@ const MullvadIndicator = GObject.registerClass({
             Mainloop.source_remove(this._timeout);
         this._timeout = undefined;
     }
-
 });
 
 function getSettings() {
@@ -203,6 +256,7 @@ function disable() {
     // Kill all queued Http requests
     httpSession.abort();
 
-    mullvadIndicator.stop();
-    mullvadIndicator.destroy();
+    mullvadStatusIndicator.stop();
+    mullvadStatusIndicator.destroy();
+    mullvadStatusIndicator = null;
 }
