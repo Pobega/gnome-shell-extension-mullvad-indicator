@@ -30,7 +30,7 @@ const MullvadIndicator = GObject.registerClass({
 
         this.watch = this.mullvad.connect('status-changed', (mullvad) => {
             global.log("Caught signal");
-            this.update(this.mullvad.applyDisplaySettingsFilter());
+            this.update();
         });
 
         this.main();
@@ -146,7 +146,7 @@ const MullvadIndicator = GObject.registerClass({
         });
         this.vpnInfoBox.add_actor(vpnInfoRow);
 
-        let connected = this.mullvad.connected();
+        let connected = this.mullvad.connected;
 
         let label = new St.Label({
             style_class: connected ? 'vpn-info-vpn-on' : 'vpn-info-vpn-off',
@@ -171,22 +171,22 @@ const MullvadIndicator = GObject.registerClass({
         this.vpnInfoBox.add_actor(new PopupMenu.PopupSeparatorMenuItem());
 
         if (connected === true) {
-            this.updateTrayIcon(ICON_CONNECTED);
+            this._updateTrayIcon(ICON_CONNECTED);
         } else {
-            this.updateTrayIcon(ICON_DISCONNECTED);
+            this._updateTrayIcon(ICON_DISCONNECTED);
             return;
         }
 
-        let detailed_status = this.mullvad.detailed_status();
+        let detailed_status = this.mullvad.detailed_status;
 
-        for (let item in status_items) {
+        for (let item in detailed_status) {
             if (detailed_status[item]) {
                 vpnInfoRow = new St.BoxLayout();
                 this.vpnInfoBox.add_actor(vpnInfoRow);
 
                 label = new St.Label({
                     style_class: 'vpn-info-item',
-                    text: `${_(items_to_show[item].name)}: `,
+                    text: `${_(detailed_status[item].name)}: `,
                     y_align: Clutter.ActorAlign.CENTER,
                     y_expand: true,
                 });
@@ -207,7 +207,6 @@ const MullvadIndicator = GObject.registerClass({
     }
 
     main() {
-        global.log("got into main")
         this.mullvad.pollMullvad();
         if (this._timeout) {
             Mainloop.source_remove(this._timeout);

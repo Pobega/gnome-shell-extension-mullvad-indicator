@@ -29,7 +29,7 @@ request.request_headers.append('User-Agent', 'curl/7.68.0');
 request.request_headers.append('Accept', '*/*');
 
 
-const MullvadVPN = GObject.registerClass({
+var MullvadVPN = GObject.registerClass({
     GTypeName: 'MullvadVPN',
     Properties: {
         'connected': GObject.ParamSpec.string('connected',
@@ -46,7 +46,8 @@ const MullvadVPN = GObject.registerClass({
     },
 }, class MullvadVPN extends GObject.Object {
     // Initialize this._connStatus and connect to GNetworkMonitor
-    _init() {
+    _init(params = {}) {
+        super._init(params);
         this.initConnStatus();
         this.connectNetworkSignals();
     }
