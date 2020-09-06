@@ -6,6 +6,7 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Mullvad = Me.imports.mullvad;
 
 const Main = imports.ui.main;
+const AggregateMenu = Main.panel.statusArea.aggregateMenu;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 const Util = imports.misc.util;
@@ -19,7 +20,7 @@ const ICON_DISCONNECTED = 'mullvad-disconnected-symbolic';
 
 const MullvadIndicator = GObject.registerClass({
     GTypeName: 'MullvadIndicator',
-}, class MullvadIndicator extends PanelMenu.Button {
+}, class MullvadIndicator extends PanelMenu.SystemIndicator {
 
     _init() {
         super._init(0);
@@ -36,173 +37,81 @@ const MullvadIndicator = GObject.registerClass({
     }
 
     _initGui() {
-        // Taskbar icon
-        this._icon = new St.Icon({
-            style_class: 'system-status-icon',
-        });
-        this._updateTrayIcon(ICON_DISCONNECTED);
-        this.add_child(this._icon);
-        // End taskbar icon
+        // Add the indicator to the indicator bar
+        this._indicator = this._addIndicator();
+        this._indicator.icon_name = 'network-vpn-symbolic';
+        this._indicator.visible = true;
 
-        // Popup menu
-        let popupMenu = new PopupMenu.PopupMenuSection();
-        this.menu.box.style = 'padding: 16px;';
-        let parentContainer = new St.BoxLayout({
-            x_align: Clutter.ActorAlign.FILL,
-            x_expand: true,
-            style: 'padding-bottom: 12px;',
-        });
-        // End popup menu
+        // Build a menu
 
-        // Highest level text box
-        this.vpnInfoBox = new St.BoxLayout({
-            style_class: 'vpn-info-box',
-            vertical: true,
-        });
-        parentContainer.add_actor(this.vpnInfoBox);
-        popupMenu.actor.add(parentContainer);
-        this.menu.addMenuItem(popupMenu);
-        // End highest level text box
+        // Main item with the header section
+        this._item = new PopupMenu.PopupSubMenuMenuItem('Initializing', true);
+        this._item.icon.icon_name = 'network-vpn-symbolic';
+        this._item.label.clutter_text.x_expand = true;
+        this.menu.addMenuItem(this._item);
 
-        // Settings button
-        let buttonBox = new St.BoxLayout();
-        this._settingsIcon = new St.Icon({
-            icon_name: 'emblem-system-symbolic',
-            style_class: 'popup-menu-icon',
-        });
-        this._settingsButton = new St.Button({
-            child: this._settingsIcon,
-            style_class: 'button',
-        });
-        this._settingsButton.connect('clicked',  () => Util.spawnCommandLine('gnome-extensions prefs mullvadindicator@pobega.github.com'));
-        buttonBox.add_actor(this._settingsButton);
-        // End settings button
+        // Content Inside the box
+        this._item.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 
-        // Refresh button
-        this._refreshIcon = new St.Icon({
-            icon_name: 'view-refresh-symbolic',
-            style_class: 'popup-menu-icon',
-        });
-        this._refreshButton = new St.Button({
-            child: this._refreshIcon,
-            x_expand: true,
-            x_align: Clutter.ActorAlign.END,
-            style_class: 'button',
-        });
-        this._refreshButton.connect('clicked',  () => {
-            this.mullvad.forceUpdate();
-        });
-        buttonBox.add_actor(this._refreshButton);
-        // End refresh button
+        // Add elements to the UI
+        AggregateMenu._indicators.insert_child_at_index(this.indicators, 0);
+        AggregateMenu.menu.addMenuItem(this.menu, 4);
 
-        popupMenu.actor.add(parentContainer);
-        popupMenu.actor.add_actor(buttonBox);
-        this.menu.addMenuItem(popupMenu);
+        this._buildBottomMenu();
 
-        Main.panel.addToStatusArea('MullvadIndicator', this, 1);
-
-        // Initial state
-        let vpnInfoRow = new St.BoxLayout({
-            x_align: Clutter.ActorAlign.START,
-            x_expand: true,
-        });
-        this.vpnInfoBox.add_actor(vpnInfoRow);
-
-        let label = new St.Label({
-            style_class: 'vpn-info-vpn-init',
-            text: 'Mullvad: ',
-            x_align: Clutter.ActorAlign.CENTER,
-            x_expand: true,
-        });
-        vpnInfoRow.add_actor(label);
-
-        let vpnLabel = new St.Label({
-            style_class: 'vpn-info-vpn-init',
-            text: _('Checking...'),
-        });
-        vpnInfoRow.add_actor(vpnLabel);
-
-        let vpnIcon = new St.Icon({
-            icon_name: 'emblem-synchronizing-symbolic',
-            style_class: 'popup-menu-icon vpn-icon-vpn-init',
-        });
-        vpnInfoRow.add_actor(vpnIcon);
-
-        this.vpnInfoBox.add_actor(new PopupMenu.PopupSeparatorMenuItem());
+        this.update()
     }
 
     _updateTrayIcon(relative_path) {
+        //TODO: implement
         this._icon.gicon = Gio.icon_new_for_string(`${Me.path}/assets/icons/${relative_path}.svg`);
+        this._indicator.icon_name = 'network-vpn-symbolic';
+        this._item.icon.icon_name = 'network-vpn-symbolic';
     }
 
     update() {
-        // Destroy current inner text boxes
-        this.vpnInfoBox.destroy_all_children();
+        // Destroy and recreate our inner menu
+        this._item.destroy();
 
-        let vpnInfoRow = new St.BoxLayout({
-            x_align: Clutter.ActorAlign.START,
-            x_expand: true,
-        });
-        this.vpnInfoBox.add_actor(vpnInfoRow);
+        // Main item with the header section
+        this._item = new PopupMenu.PopupSubMenuMenuItem('Initializing', true);
+        this._item.icon.icon_name = 'network-vpn-symbolic';
+        this._item.label.clutter_text.x_expand = true;
+        this.menu.addMenuItem(this._item);
 
-        let connected = this.mullvad.connected;
+        this._item.label.text = this.mullvad.connected ? "Connected" : "Disconnected";
 
-        let label = new St.Label({
-            style_class: connected ? 'vpn-info-vpn-on' : 'vpn-info-vpn-off',
-            text: 'Mullvad: ',
-            x_align: Clutter.ActorAlign.CENTER,
-            x_expand: true,
-        });
-        vpnInfoRow.add_actor(label);
+        // Content Inside the box
+        this._item.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 
-        let vpnLabel = new St.Label({
-            style_class: connected ? 'vpn-info-vpn-on' : 'vpn-info-vpn-off',
-            text: connected ? _('Connected') : _('Disconnected'),
-        });
-        vpnInfoRow.add_actor(vpnLabel);
+        // Add elements to the UI
+        AggregateMenu.menu.addMenuItem(this.menu, 4);
 
-        let vpnIcon = new St.Icon({
-            icon_name: connected ? 'security-high-symbolic' : 'security-low-symbolic',
-            style_class: connected ? 'popup-menu-icon vpn-icon-vpn-on' : 'popup-menu-icon vpn-icon-vpn-off',
-        });
-        vpnInfoRow.add_actor(vpnIcon);
-
-        this.vpnInfoBox.add_actor(new PopupMenu.PopupSeparatorMenuItem());
-
-        if (connected === true) {
-            this._updateTrayIcon(ICON_CONNECTED);
-        } else {
-            this._updateTrayIcon(ICON_DISCONNECTED);
-            return;
+        let detailedStatus = this.mullvad.detailed_status;
+        for (let item in detailedStatus) {
+            let title = detailedStatus[item].name;
+            let body = detailedStatus[item].text;
+            let statusText = `${title}: ${body}`;
+            let menuItem = new PopupMenu.PopupMenuItem(statusText);
+            this._disconnectAction = this._item.menu.addMenuItem(menuItem);
         }
+        
+        this._buildBottomMenu();
 
-        let detailed_status = this.mullvad.detailed_status;
+    }
 
-        for (let item in detailed_status) {
-            if (detailed_status[item]) {
-                vpnInfoRow = new St.BoxLayout();
-                this.vpnInfoBox.add_actor(vpnInfoRow);
-
-                label = new St.Label({
-                    style_class: 'vpn-info-item',
-                    text: `${_(detailed_status[item].name)}: `,
-                    y_align: Clutter.ActorAlign.CENTER,
-                    y_expand: true,
-                });
-                vpnInfoRow.add_actor(label);
-
-                let infoLabel = new St.Label({
-                    style_class: 'vpn-info-value',
-                    text: detailed_status[item].text || '',
-                    y_align: Clutter.ActorAlign.CENTER,
-                    y_expand: true,
-                });
-                let dataLabelBtn = new St.Button({
-                    child: infoLabel,
-                });
-                vpnInfoRow.add_actor(dataLabelBtn);
-            }
-        }
+    _buildBottomMenu() {
+        let refreshItem = new PopupMenu.PopupMenuItem('Refresh');
+        refreshItem.actor.connect('button-press-event', () => {
+            //TODO: implement a forced update
+            return
+        });
+        this._item.menu.addMenuItem(refreshItem);
+        let settingsItem = new PopupMenu.PopupMenuItem('Settings');
+        settingsItem.actor.connect('button-press-event', () => {
+            Util.spawnCommandLine('gnome-extensions prefs mullvadindicator@pobega.github.com');
+        });
+        this._item.menu.addMenuItem(settingsItem);
     }
 
     main() {
