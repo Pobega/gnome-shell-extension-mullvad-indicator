@@ -1,11 +1,12 @@
 const {Gio, GObject, Gtk} = imports.gi;
 const Gettext = imports.gettext;
 
-const ExtensionUtils = imports.misc.extensionUtils;
-const Extension = ExtensionUtils.getCurrentExtension();
+const Me = imports.misc.extensionUtils.getCurrentExtension();
 
-Gettext.bindtextdomain("mullvadindicator", Me.dir.get_child("locale").get_path());
-Gettext.textdomain("mullvadindicator");
+const ExtensionUtils = imports.misc.extensionUtils;
+
+Gettext.bindtextdomain('mullvadindicator', Me.dir.get_child('locale').get_path());
+Gettext.textdomain('mullvadindicator');
 const _ = Gettext.gettext;
 
 function init() {

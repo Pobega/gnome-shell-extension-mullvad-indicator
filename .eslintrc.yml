@@ -24,9 +24,7 @@ rules:
   #     allow: [^vfunc_, ^on_, _instance_init]
   comma-dangle:
     - error
-    - arrays: always-multiline
-      objects: always-multiline
-      functions: never
+    - always-multiline
   comma-spacing:
     - error
     - before: false
@@ -89,7 +87,6 @@ rules:
     - error
     - all
     - conditionalAssign: false
-      nestedBinaryExpressions: false
       returnAssign: false
   no-implicit-coercion:
     - error
@@ -109,14 +106,14 @@ rules:
   no-restricted-properties:
     - error
     - object: Lang
-      property: copyProperties
-      message: Use Object.assign()
-    - object: Lang
       property: bind
       message: Use arrow notation or Function.prototype.bind()
     - object: Lang
       property: Class
       message: Use ES6 classes
+    - object: imports
+      property: mainloop
+      message: Use GLib main loops and timeouts
   no-restricted-syntax:
     - error
     - selector: >-
@@ -132,8 +129,6 @@ rules:
         BlockStatement[body.length=1]
         CallExpression[arguments.length=0][callee.object.type="Super"][callee.property.name="_init"]
       message: _init() that only calls super._init() is unnecessary
-    - selector: BinaryExpression[operator="instanceof"][right.name="Array"]
-      message: Use Array.isArray()
   no-return-assign: error
   no-return-await: error
   no-self-compare: error
@@ -222,12 +217,12 @@ globals:
   ARGV: readonly
   Debugger: readonly
   GIRepositoryGType: readonly
-  globalThis: readonly
   imports: readonly
   Intl: readonly
   log: readonly
   logError: readonly
   print: readonly
   printerr: readonly
+  window: readonly
 parserOptions:
-  ecmaVersion: 2020
+  ecmaVersion: 2017

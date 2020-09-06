@@ -1,21 +1,19 @@
-const Clutter = imports.gi.Clutter;
+const {Clutter, Gio, St} = imports.gi;
 const Gettext = imports.gettext;
-const Gio = imports.gi.Gio;
-const St = imports.gi.St;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 const Main = imports.ui.main;
-const Mainloop = imports.mainloop;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 const Util = imports.misc.util;
 
+
 const ICON_CONNECTED = 'mullvad-connected-symbolic';
 const ICON_DISCONNECTED = 'mullvad-disconnected-symbolic';
 
-Gettext.bindtextdomain("mullvadindicator", Me.dir.get_child("locale").get_path());
-Gettext.textdomain("mullvadindicator");
+Gettext.bindtextdomain('mullvadindicator', Me.dir.get_child('locale').get_path());
+Gettext.textdomain('mullvadindicator');
 const _ = Gettext.gettext;
 
 function init(object) {
@@ -93,7 +91,7 @@ function init(object) {
 
     let label = new St.Label({
         style_class: 'vpn-info-vpn-init',
-        text: `${_('Mullvad')}: `,
+        text: 'Mullvad: ',
         x_align: Clutter.ActorAlign.CENTER,
         x_expand: true,
     });
@@ -101,7 +99,7 @@ function init(object) {
 
     let vpnLabel = new St.Label({
         style_class: 'vpn-info-vpn-init',
-        text: 'Checking...',
+        text: _('Checking...'),
     });
     vpnInfoRow.add_actor(vpnLabel);
 
@@ -130,7 +128,7 @@ function update(object, items_to_show) {
 
     let label = new St.Label({
         style_class: object._connected ? 'vpn-info-vpn-on' : 'vpn-info-vpn-off',
-        text: `${_('Mullvad')}: `,
+        text: 'Mullvad: ',
         x_align: Clutter.ActorAlign.CENTER,
         x_expand: true,
     });
@@ -159,10 +157,10 @@ function update(object, items_to_show) {
 
     for (let item in items_to_show) {
         if (object._connStatus[item]) {
-            let vpnInfoRow = new St.BoxLayout();
+            vpnInfoRow = new St.BoxLayout();
             object.vpnInfoBox.add_actor(vpnInfoRow);
 
-            let label = new St.Label({
+            label = new St.Label({
                 style_class: 'vpn-info-item',
                 text: `${_(items_to_show[item].name)}: `,
                 y_align: Clutter.ActorAlign.CENTER,
@@ -178,9 +176,6 @@ function update(object, items_to_show) {
             });
             let dataLabelBtn = new St.Button({
                 child: infoLabel,
-            });
-            dataLabelBtn.connect('button-press-event', () => {
-                Clipboard.set_text(CLIPBOARD_TYPE, dataLabelBtn.child.text);
             });
             vpnInfoRow.add_actor(dataLabelBtn);
         }
