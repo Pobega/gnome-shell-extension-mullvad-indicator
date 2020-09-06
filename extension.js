@@ -181,7 +181,7 @@ function getSettings() {
         false,
     );
     const schemaObj = schemaSource.lookup(
-        'org.gnome.shell.extensions.amimullvad',
+        'org.gnome.shell.extensions.mullvadindicator',
         true,
     );
     if (!schemaObj)
@@ -193,16 +193,16 @@ function getSettings() {
 function init() {
 }
 
-let amIMullvad;
+let mullvadIndicator;
 
 function enable() {
-    amIMullvad = new MullvadIndicator();
+    mullvadIndicator = new MullvadIndicator();
 }
 
 function disable() {
     // Kill all queued Http requests
     httpSession.abort();
 
-    amIMullvad.stop();
-    amIMullvad.destroy();
+    mullvadIndicator.stop();
+    mullvadIndicator.destroy();
 }

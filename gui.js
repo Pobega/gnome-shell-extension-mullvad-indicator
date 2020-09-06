@@ -55,7 +55,7 @@ function init(object) {
         child: object._settingsIcon,
         style_class: 'button',
     });
-    object._settingsButton.connect('clicked',  () => Util.spawnCommandLine('gnome-extensions prefs amimullvad@pobega.github.com'));
+    object._settingsButton.connect('clicked',  () => Util.spawnCommandLine('gnome-extensions prefs mullvadindicator@pobega.github.com'));
     buttonBox.add_actor(object._settingsButton);
     // End settings button
 
@@ -80,7 +80,7 @@ function init(object) {
     popupMenu.actor.add_actor(buttonBox);
     object.menu.addMenuItem(popupMenu);
 
-    Main.panel.addToStatusArea('AmIMullvad', object, 1);
+    Main.panel.addToStatusArea('MullvadIndicator', object, 1);
 
     // Initial state
     let vpnInfoRow = new St.BoxLayout({

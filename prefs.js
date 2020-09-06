@@ -12,8 +12,8 @@ const _ = Gettext.gettext;
 function init() {
 }
 
-const AmIMullvadPrefsWidget = GObject.registerClass(
-class AmIMullvadPrefsWidget extends Gtk.Box {
+const MullvadIndicatorPrefsWidget = GObject.registerClass(
+class MullvadIndicatorPrefsWidget extends Gtk.Box {
     _init() {
         super._init({
             orientation: Gtk.Orientation.VERTICAL,
@@ -24,7 +24,7 @@ class AmIMullvadPrefsWidget extends Gtk.Box {
             margin_end: 36,
         });
 
-        this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.amimullvad');
+        this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.mullvadindicator');
 
         let refreshTimeLabel = new Gtk.Label({
             label: _('Automatic refresh time (in seconds)'),
@@ -81,5 +81,5 @@ class AmIMullvadPrefsWidget extends Gtk.Box {
 });
 
 function buildPrefsWidget() {
-    return new AmIMullvadPrefsWidget();
+    return new MullvadIndicatorPrefsWidget();
 }
