@@ -113,7 +113,7 @@ function init(object) {
 }
 
 function updateTrayIcon(object, relative_path) {
-    object._icon.gicon = Gio.icon_new_for_string(`${Me.path}/icons/${relative_path}.svg`);
+    object._icon.gicon = Gio.icon_new_for_string(`${Me.path}/assets/icons/${relative_path}.svg`);
 }
 
 function update(object, items_to_show) {
