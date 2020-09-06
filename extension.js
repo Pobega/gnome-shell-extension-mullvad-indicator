@@ -39,14 +39,14 @@ const MullvadIndicator = GObject.registerClass({
     _initGui() {
         // Add the indicator to the indicator bar
         this._indicator = this._addIndicator();
-        this._indicator.icon_name = 'network-vpn-symbolic';
+        this._indicator.gicon = Gio.icon_new_for_string(`${Me.path}/icons/mullvad-disconnected-symbolic.svg`);
         this._indicator.visible = true;
 
         // Build a menu
 
         // Main item with the header section
         this._item = new PopupMenu.PopupSubMenuMenuItem('Initializing', true);
-        this._item.icon.icon_name = 'network-vpn-symbolic';
+        this._item.icon.gicon = Gio.icon_new_for_string(`${Me.path}/icons/mullvad-disconnected-symbolic.svg`);
         this._item.label.clutter_text.x_expand = true;
         this.menu.addMenuItem(this._item);
 
@@ -62,20 +62,18 @@ const MullvadIndicator = GObject.registerClass({
         this.update()
     }
 
-    _updateTrayIcon(relative_path) {
-        //TODO: implement
-        this._icon.gicon = Gio.icon_new_for_string(`${Me.path}/assets/icons/${relative_path}.svg`);
-        this._indicator.icon_name = 'network-vpn-symbolic';
-        this._item.icon.icon_name = 'network-vpn-symbolic';
-    }
-
     update() {
         // Destroy and recreate our inner menu
         this._item.destroy();
 
+        let icon = this.mullvad.connected ? ICON_CONNECTED : ICON_DISCONNECTED
+
+        // Update systray icon first
+        this._indicator.gicon = Gio.icon_new_for_string(`${Me.path}/icons/${icon}.svg`);
+
         // Main item with the header section
         this._item = new PopupMenu.PopupSubMenuMenuItem('Initializing', true);
-        this._item.icon.icon_name = 'network-vpn-symbolic';
+        this._item.icon.gicon = Gio.icon_new_for_string(`${Me.path}/icons/${icon}.svg`);
         this._item.label.clutter_text.x_expand = true;
         this.menu.addMenuItem(this._item);
 
@@ -91,11 +89,14 @@ const MullvadIndicator = GObject.registerClass({
         for (let item in detailedStatus) {
             let title = detailedStatus[item].name;
             let body = detailedStatus[item].text;
-            let statusText = `${title}: ${body}`;
-            let menuItem = new PopupMenu.PopupMenuItem(statusText);
-            this._disconnectAction = this._item.menu.addMenuItem(menuItem);
+            // Don't add menu items for undefined values
+            if (body) {
+                let statusText = `${title}: ${body}`;
+                let menuItem = new PopupMenu.PopupMenuItem(statusText);
+                this._disconnectAction = this._item.menu.addMenuItem(menuItem);
+            }
         }
-        
+
         this._buildBottomMenu();
 
     }
@@ -103,8 +104,7 @@ const MullvadIndicator = GObject.registerClass({
     _buildBottomMenu() {
         let refreshItem = new PopupMenu.PopupMenuItem('Refresh');
         refreshItem.actor.connect('button-press-event', () => {
-            //TODO: implement a forced update
-            return
+            this.mullvad.pollMullvad();
         });
         this._item.menu.addMenuItem(refreshItem);
         let settingsItem = new PopupMenu.PopupMenuItem('Settings');
