@@ -11,11 +11,11 @@ const Mainloop = imports.mainloop;
 const PanelMenu = imports.ui.panelMenu;
 
 
-const API_URL = 'https://am.i.mullvad.net/json';
-
 Gettext.bindtextdomain('mullvadindicator', Me.dir.get_child('locale').get_path());
 Gettext.textdomain('mullvadindicator');
 const _ = Gettext.gettext;
+
+const API_URL = 'https://am.i.mullvad.net/json';
 
 const DEFAULT_ITEMS = {
     server: {name: _('Server'), text: ''},
@@ -27,8 +27,6 @@ const DEFAULT_ITEMS = {
 
 const ICON_CONNECTED = 'mullvad-connected-symbolic';
 const ICON_DISCONNECTED = 'mullvad-disconnected-symbolic';
-
-const HTTP_TIMEOUT_REACHED = 7;
 
 let networkMonitor = Gio.NetworkMonitor.get_default();
 
@@ -113,7 +111,7 @@ const MullvadIndicator = GObject.registerClass({
         api_response = JSON.parse(api_response);
 
         // Don't do anything if our GET failed
-        if (status_code === HTTP_TIMEOUT_REACHED)
+        if (status_code === Soup.KnownStatusCode.IO_ERROR)
             return;
 
         // if api_response is null we want to assume we're disconnected

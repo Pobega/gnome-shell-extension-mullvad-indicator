@@ -93,7 +93,7 @@ function init(object) {
 
     let label = new St.Label({
         style_class: 'vpn-info-vpn-init',
-        text: `${_('Mullvad')}: `,
+        text: 'Mullvad: ',
         x_align: Clutter.ActorAlign.CENTER,
         x_expand: true,
     });
@@ -101,7 +101,7 @@ function init(object) {
 
     let vpnLabel = new St.Label({
         style_class: 'vpn-info-vpn-init',
-        text: 'Checking...',
+        text: _('Checking...'),
     });
     vpnInfoRow.add_actor(vpnLabel);
 
@@ -130,7 +130,7 @@ function update(object, items_to_show) {
 
     let label = new St.Label({
         style_class: object._connected ? 'vpn-info-vpn-on' : 'vpn-info-vpn-off',
-        text: `${_('Mullvad')}: `,
+        text: 'Mullvad: ',
         x_align: Clutter.ActorAlign.CENTER,
         x_expand: true,
     });
