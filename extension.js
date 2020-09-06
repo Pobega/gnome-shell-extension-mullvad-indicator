@@ -25,11 +25,11 @@ const ICON_DISCONNECTED = 'mullvad-disconnected-symbolic';
 
 const HTTP_TIMEOUT_REACHED = 7;
 
-let _networkMonitor = Gio.NetworkMonitor.get_default();
+let networkMonitor = Gio.NetworkMonitor.get_default();
 
-let _httpSession = new Soup.SessionAsync();
-Soup.Session.prototype.add_feature.call(_httpSession, new Soup.ProxyResolverDefault());
-_httpSession.timeout = 5;
+let httpSession = new Soup.SessionAsync();
+Soup.Session.prototype.add_feature.call(httpSession, new Soup.ProxyResolverDefault());
+httpSession.timeout = 5;
 
 const MullvadIndicator = GObject.registerClass({
     GTypeName: 'MullvadIndicator',
@@ -51,7 +51,7 @@ const MullvadIndicator = GObject.registerClass({
 
     _connectNetworkSignals() {
         // Refresh our status when a network event occurs
-        _networkMonitor.connect('network-changed', function () {
+        networkMonitor.connect('network-changed', function () {
             this._forceUpdate();
         }.bind(this));
     }
@@ -86,7 +86,12 @@ const MullvadIndicator = GObject.registerClass({
         message.request_headers.append('User-Agent', 'curl/7.68.0');
         message.request_headers.append('Accept', '*/*');
 
-        _httpSession.queue_message(message, function (_httpSession, message) {
+        // Exit early and return null values if we're explicitly not connected
+        if (networkMonitor.connectivity !== Gio.NetworkConnectivity.FULL) {
+            callback(null, null, null);
+        }
+
+        httpSession.queue_message(message, function (httpSession, message) {
             if (message.status_code !== 200) {
                 callback(message.status_code, null);
                 return;
@@ -99,16 +104,12 @@ const MullvadIndicator = GObject.registerClass({
 
 
     _checkIfStatusChanged(status_code, api_response) {
-        // TODO: check NetworkMonitor for status, otherwise when we
-        // disconnect we will never actually mark ourselves as offline.
-
         // Unsure why I need to JSON.parse this again but whatever
         api_response = JSON.parse(api_response);
 
         // Don't do anything if our GET failed
         if (status_code === HTTP_TIMEOUT_REACHED)
             return;
-
 
         // if api_response is null we want to assume we're disconnected
         if (!api_response) {
