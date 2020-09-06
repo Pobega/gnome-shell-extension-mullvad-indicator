@@ -29,7 +29,6 @@ const MullvadIndicator = GObject.registerClass({
         this._initGui();
 
         this.watch = this.mullvad.connect('status-changed', (mullvad) => {
-            global.log("Caught signal");
             this.update();
         });
 

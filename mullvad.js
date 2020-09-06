@@ -15,19 +15,14 @@ const DEFAULT_ITEMS = {
     type: {name: _('VPN Type'), text: ''},
 };
 
-const networkMonitor = Gio.NetworkMonitor.get_default();
+const _networkMonitor = Gio.NetworkMonitor.get_default();
 
-const httpSession = new Soup.SessionAsync();
-Soup.Session.prototype.add_feature.call(httpSession, new Soup.ProxyResolverDefault());
-httpSession.timeout = 5;
-const request = new Soup.Message({
-    method: 'GET',
-    uri: Soup.URI.new('https://am.i.mullvad.net/json'),
-});
-// Fake CURL to prevent 403
-request.request_headers.append('User-Agent', 'curl/7.68.0');
-request.request_headers.append('Accept', '*/*');
-
+const _httpSession = new Soup.SessionAsync();
+Soup.Session.prototype.add_feature.call(
+    _httpSession,
+    new Soup.ProxyResolverDefault()
+);
+_httpSession.timeout = 2;
 
 var MullvadVPN = GObject.registerClass({
     GTypeName: 'MullvadVPN',
@@ -48,6 +43,8 @@ var MullvadVPN = GObject.registerClass({
     // Initialize this._connStatus and connect to GNetworkMonitor
     _init(params = {}) {
         super._init(params);
+
+
         this.initConnStatus();
         this.connectNetworkSignals();
     }
@@ -75,9 +72,9 @@ var MullvadVPN = GObject.registerClass({
 
     // force an update check when a GNetworkMonitor emits network-changed
     connectNetworkSignals() {
-        networkMonitor.connect('network-changed', function () {
-            this.forceUpdate();
-        }.bind(this));
+        _networkMonitor.connect('network-changed', () => {
+            this.pollMullvad();
+        });
     }
 
     // Force a hard update by re-initializing _connStatus and calling update
@@ -88,18 +85,22 @@ var MullvadVPN = GObject.registerClass({
 
     // Wrapper for fetchConnectionInfo that passes a callback
     pollMullvad() {
-        this._fetchConnectionInfo(function (status_code, response) {
+        this._fetchConnectionInfo((status_code, response) => {
             this._checkIfStatusChanged(status_code, response);
-        }.bind(this));
+        });
     }
 
     // Use Soup.Session to GET am.i.mullvad.net/json
     _fetchConnectionInfo(callback) {
-        // Exit early and return null values if we're explicitly not connected
-        if (networkMonitor.connectivity !== Gio.NetworkConnectivity.FULL)
-            callback(null, null, null);
+        const request = new Soup.Message({
+            method: 'GET',
+            uri: Soup.URI.new('https://am.i.mullvad.net/json'),
+        });
+        // Fake CURL to prevent 403
+        request.request_headers.append('User-Agent', 'curl/7.68.0');
+        request.request_headers.append('Accept', '*/*');
 
-        httpSession.queue_message(request, function (session, message) {
+        _httpSession.queue_message(request, function (session, message) {
             if (message.status_code !== 200) {
                 callback(message.status_code, null);
                 return;
@@ -118,21 +119,19 @@ var MullvadVPN = GObject.registerClass({
         api_response = JSON.parse(api_response);
 
         // Don't do anything if our GET failed
-        if (status_code === Soup.KnownStatusCode.IO_ERROR)
+        if (status_code === Soup.KnownStatusCode.IO_ERROR) {
             return;
+        }
 
         // if api_response is null we want to assume we're disconnected
         if (!api_response) {
             this._connected = false;
-            global.log(`emitting update: ${this._connected}`);
             this.emit('status-changed');
             return;
         }
 
         // Only update if our status has changed
-        if (this._connected !== api_response.mullvad_exit_ip ||
-            this._connStatus.ip.text !== api_response.ip ||
-            this._connStatus.server.text !== api_response.mullvad_exit_ip_hostname) {
+        if (this._connected !== api_response.mullvad_exit_ip) {
             // Overwrite all values with the API response
             this._connected = api_response.mullvad_exit_ip;
             this._connStatus.ip.text = api_response.ip;
@@ -143,7 +142,6 @@ var MullvadVPN = GObject.registerClass({
         }
 
         // Always tell the GUI to redraw since we don't know its state
-        global.log(`emitting update: ${this._connected}`);
         this.emit('status-changed');
     }
 
