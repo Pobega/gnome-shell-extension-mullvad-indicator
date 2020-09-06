@@ -14,8 +14,8 @@ const Util = imports.misc.util;
 const ICON_CONNECTED = 'mullvad-connected-symbolic';
 const ICON_DISCONNECTED = 'mullvad-disconnected-symbolic';
 
-Gettext.bindtextdomain("mullvadindicator", Me.dir.get_child("locale").get_path());
-Gettext.textdomain("mullvadindicator");
+Gettext.bindtextdomain('mullvadindicator', Me.dir.get_child('locale').get_path());
+Gettext.textdomain('mullvadindicator');
 const _ = Gettext.gettext;
 
 function init(object) {

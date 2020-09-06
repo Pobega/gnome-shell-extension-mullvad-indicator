@@ -13,8 +13,8 @@ const PanelMenu = imports.ui.panelMenu;
 
 const API_URL = 'https://am.i.mullvad.net/json';
 
-Gettext.bindtextdomain("mullvadindicator", Me.dir.get_child("locale").get_path());
-Gettext.textdomain("mullvadindicator");
+Gettext.bindtextdomain('mullvadindicator', Me.dir.get_child('locale').get_path());
+Gettext.textdomain('mullvadindicator');
 const _ = Gettext.gettext;
 
 const DEFAULT_ITEMS = {
@@ -92,9 +92,9 @@ const MullvadIndicator = GObject.registerClass({
         message.request_headers.append('Accept', '*/*');
 
         // Exit early and return null values if we're explicitly not connected
-        if (networkMonitor.connectivity !== Gio.NetworkConnectivity.FULL) {
+        if (networkMonitor.connectivity !== Gio.NetworkConnectivity.FULL)
             callback(null, null, null);
-        }
+
 
         httpSession.queue_message(message, function (httpSession, message) {
             if (message.status_code !== 200) {

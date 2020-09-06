@@ -4,8 +4,8 @@ const Gettext = imports.gettext;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Extension = ExtensionUtils.getCurrentExtension();
 
-Gettext.bindtextdomain("mullvadindicator", Me.dir.get_child("locale").get_path());
-Gettext.textdomain("mullvadindicator");
+Gettext.bindtextdomain('mullvadindicator', Me.dir.get_child('locale').get_path());
+Gettext.textdomain('mullvadindicator');
 const _ = Gettext.gettext;
 
 function init() {
