@@ -1,4 +1,4 @@
-const { Gio, GObject, Gtk } = imports.gi;
+const {Gio, GObject, Gtk} = imports.gi;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Extension = ExtensionUtils.getCurrentExtension();
@@ -75,5 +75,5 @@ class AmIMullvadPrefsWidget extends Gtk.Box {
 });
 
 function buildPrefsWidget() {
-    return new AmIMullvadPrefsWidget;
+    return new AmIMullvadPrefsWidget();
 }

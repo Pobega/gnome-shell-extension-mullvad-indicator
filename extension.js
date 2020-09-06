@@ -72,7 +72,7 @@ const MullvadIndicator = GObject.registerClass({
 
     // Caller for fetchConnectionInfo that passes the callback
     _update() {
-        this._fetchConnectionInfo(function(status_code, response) {
+        this._fetchConnectionInfo(function (status_code, response) {
             this._checkIfStatusChanged(status_code, response);
         }.bind(this));
     }
@@ -99,22 +99,22 @@ const MullvadIndicator = GObject.registerClass({
 
 
     _checkIfStatusChanged(status_code, api_response) {
-        //TODO: check NetworkMonitor for status, otherwise when we
-        //disconnect we will never actually mark ourselves as offline.
+        // TODO: check NetworkMonitor for status, otherwise when we
+        // disconnect we will never actually mark ourselves as offline.
 
         // Unsure why I need to JSON.parse this again but whatever
         api_response = JSON.parse(api_response);
 
         // Don't do anything if our GET failed
-        if (status_code === HTTP_TIMEOUT_REACHED) {
+        if (status_code === HTTP_TIMEOUT_REACHED)
             return;
-        }
+
 
         // if api_response is null we want to assume we're disconnected
         if (!api_response) {
             this._connected = false;
             Gui.update(this, this._applyDisplaySettingsFilter());
-            return
+            return;
         }
 
         // Only update if our status has changed
@@ -152,7 +152,7 @@ const MullvadIndicator = GObject.registerClass({
     // opts not to see removed, for passing to Gui.update()
     _applyDisplaySettingsFilter() {
         let settings = getSettings();
-        let displaySettings = {}
+        let displaySettings = {};
         if (settings.get_boolean('show-server'))
             displaySettings.server = this._connStatus.server;
         if (settings.get_boolean('show-country'))
@@ -178,17 +178,17 @@ const MullvadIndicator = GObject.registerClass({
 function getSettings() {
     let GioSSS = Gio.SettingsSchemaSource;
     let schemaSource = GioSSS.new_from_directory(
-        Me.dir.get_child("schemas").get_path(),
+        Me.dir.get_child('schemas').get_path(),
         GioSSS.get_default(),
-        false,
+        false
     );
     let schemaObj = schemaSource.lookup(
-        "org.gnome.shell.extensions.amimullvad",
-        true,
+        'org.gnome.shell.extensions.amimullvad',
+        true
     );
-    if (!schemaObj) {
+    if (!schemaObj)
         throw new Error('cannot find schemas');
-    }
+
     return new Gio.Settings({settings_schema: schemaObj});
 }
 
