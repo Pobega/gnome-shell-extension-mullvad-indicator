@@ -2,6 +2,7 @@ const {GObject, Gio, Soup} = imports.gi;
 const Gettext = imports.gettext;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Settings = Me.imports.settings;
 
 Gettext.bindtextdomain('mullvadindicator', Me.dir.get_child('locale').get_path());
 Gettext.textdomain('mullvadindicator');
@@ -45,8 +46,8 @@ var MullvadVPN = GObject.registerClass({
         super._init(params);
 
 
-        this.initConnStatus();
-        this.connectNetworkSignals();
+        this._initConnStatus();
+        this._connectNetworkSignals();
     }
 
     // Boolean; whether or not we're connected
@@ -64,27 +65,27 @@ var MullvadVPN = GObject.registerClass({
     }
 
     // Initialize our connStatus to empty strings
-    initConnStatus() {
+    _initConnStatus() {
         // We use JSON here to 'clone' from our default Object
         this._connStatus = JSON.parse(JSON.stringify(DEFAULT_ITEMS));
         this._connected = false;
     }
 
     // force an update check when a GNetworkMonitor emits network-changed
-    connectNetworkSignals() {
+    _connectNetworkSignals() {
         _networkMonitor.connect('network-changed', () => {
-            this.pollMullvad();
+            this._pollMullvad();
         });
     }
 
     // Force a hard update by re-initializing _connStatus and calling update
-    forceUpdate() {
-        this.initConnStatus();
-        this.pollMullvad();
+    _forceUpdate() {
+        this._initConnStatus();
+        this._pollMullvad();
     }
 
     // Wrapper for fetchConnectionInfo that passes a callback
-    pollMullvad() {
+    _pollMullvad() {
         this._fetchConnectionInfo((status_code, response) => {
             this._checkIfStatusChanged(status_code, response);
         });
@@ -122,7 +123,6 @@ var MullvadVPN = GObject.registerClass({
         if (status_code === Soup.KnownStatusCode.IO_ERROR)
             return;
 
-
         // if api_response is null we want to assume we're disconnected
         if (!api_response) {
             this._connected = false;
@@ -148,7 +148,7 @@ var MullvadVPN = GObject.registerClass({
     // Return a copy of this._connStatus with the items the user
     // opts not to see removed, used by the _connStatus getter
     _detailedStatusFiltered() {
-        const settings = getSettings();
+        const settings = Settings._getSettings();
         const displaySettings = {};
         if (settings.get_boolean('show-server'))
             displaySettings.server = this._connStatus.server;
@@ -164,20 +164,3 @@ var MullvadVPN = GObject.registerClass({
     }
 
 });
-
-function getSettings() {
-    const GioSSS = Gio.SettingsSchemaSource;
-    const schemaSource = GioSSS.new_from_directory(
-        Me.dir.get_child('schemas').get_path(),
-        GioSSS.get_default(),
-        false,
-    );
-    const schemaObj = schemaSource.lookup(
-        'org.gnome.shell.extensions.mullvadindicator',
-        true,
-    );
-    if (!schemaObj)
-        throw new Error('cannot find schemas');
-
-    return new Gio.Settings({settings_schema: schemaObj});
-}

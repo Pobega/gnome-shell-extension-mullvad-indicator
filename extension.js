@@ -1,9 +1,10 @@
-const {Clutter, GObject, Gio, St} = imports.gi;
+const {GObject, Gio} = imports.gi;
 const Gettext = imports.gettext;
 const Mainloop = imports.mainloop;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Mullvad = Me.imports.mullvad;
+const Settings = Me.imports.settings;
 
 const Main = imports.ui.main;
 const AggregateMenu = Main.panel.statusArea.aggregateMenu;
@@ -18,6 +19,10 @@ const _ = Gettext.gettext;
 const ICON_CONNECTED = 'mullvad-connected-symbolic';
 const ICON_DISCONNECTED = 'mullvad-disconnected-symbolic';
 
+const STATUS_STARTING = _('Initializing');
+const STATUS_CONNECTED = _('Connected');
+const STATUS_DISCONNECTED = _('Disconnected');
+
 const MullvadIndicator = GObject.registerClass({
     GTypeName: 'MullvadIndicator',
 }, class MullvadIndicator extends PanelMenu.SystemIndicator {
@@ -25,15 +30,14 @@ const MullvadIndicator = GObject.registerClass({
     _init() {
         super._init(0);
 
-        this.mullvad = new Mullvad.MullvadVPN();
-
+        this._mullvad = new Mullvad.MullvadVPN();
         this._initGui();
 
-        this.watch = this.mullvad.connect('status-changed', mullvad => {
-            this.update();
+        this._watch = this._mullvad.connect('status-changed', _mullvad => {
+            this._update();
         });
 
-        this.main();
+        this._main();
     }
 
     _initGui() {
@@ -45,7 +49,7 @@ const MullvadIndicator = GObject.registerClass({
         // Build a menu
 
         // Main item with the header section
-        this._item = new PopupMenu.PopupSubMenuMenuItem('Initializing', true);
+        this._item = new PopupMenu.PopupSubMenuMenuItem(STATUS_STARTING, true);
         this._item.icon.gicon = Gio.icon_new_for_string(`${Me.path}/icons/mullvad-disconnected-symbolic.svg`);
         this._item.label.clutter_text.x_expand = true;
         this.menu.addMenuItem(this._item);
@@ -54,30 +58,30 @@ const MullvadIndicator = GObject.registerClass({
         this._item.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 
         // Add elements to the UI
-        AggregateMenu._indicators.insert_child_at_index(this.indicators, 0);
+        AggregateMenu._indicators.insert_child_at_index(this, 0);
         AggregateMenu.menu.addMenuItem(this.menu, 4);
 
         this._buildBottomMenu();
 
-        this.update()
+        this._update();
     }
 
-    update() {
+    _update() {
         // Destroy and recreate our inner menu
         this._item.destroy();
 
-        let icon = this.mullvad.connected ? ICON_CONNECTED : ICON_DISCONNECTED
+        let icon = this._mullvad.connected ? ICON_CONNECTED : ICON_DISCONNECTED;
 
         // Update systray icon first
         this._indicator.gicon = Gio.icon_new_for_string(`${Me.path}/icons/${icon}.svg`);
 
         // Main item with the header section
-        this._item = new PopupMenu.PopupSubMenuMenuItem('Initializing', true);
+        this._item = new PopupMenu.PopupSubMenuMenuItem(STATUS_STARTING, true);
         this._item.icon.gicon = Gio.icon_new_for_string(`${Me.path}/icons/${icon}.svg`);
         this._item.label.clutter_text.x_expand = true;
         this.menu.addMenuItem(this._item);
 
-        this._item.label.text = this.mullvad.connected ? "Connected" : "Disconnected";
+        this._item.label.text = this._mullvad.connected ? STATUS_CONNECTED : STATUS_DISCONNECTED;
 
         // Content Inside the box
         this._item.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
@@ -85,7 +89,7 @@ const MullvadIndicator = GObject.registerClass({
         // Add elements to the UI
         AggregateMenu.menu.addMenuItem(this.menu, 4);
 
-        let detailedStatus = this.mullvad.detailed_status;
+        let detailedStatus = this._mullvad.detailed_status;
         for (let item in detailedStatus) {
             let title = detailedStatus[item].name;
             let body = detailedStatus[item].text;
@@ -98,35 +102,40 @@ const MullvadIndicator = GObject.registerClass({
         }
 
         this._buildBottomMenu();
-
     }
 
     _buildBottomMenu() {
-        let refreshItem = new PopupMenu.PopupMenuItem('Refresh');
+        // Refresh menu item
+        let refreshItem = new PopupMenu.PopupMenuItem(_('Refresh'));
         refreshItem.actor.connect('button-press-event', () => {
-            this.mullvad.pollMullvad();
+            this._mullvad._pollMullvad();
         });
         this._item.menu.addMenuItem(refreshItem);
-        let settingsItem = new PopupMenu.PopupMenuItem('Settings');
+
+        // Settings menu item
+        let settingsItem = new PopupMenu.PopupMenuItem(_('Settings'));
         settingsItem.actor.connect('button-press-event', () => {
             Util.spawnCommandLine('gnome-extensions prefs mullvadindicator@pobega.github.com');
         });
         this._item.menu.addMenuItem(settingsItem);
     }
 
-    main() {
-        this.mullvad.pollMullvad();
+    _main() {
+        this._mullvad._pollMullvad();
         if (this._timeout) {
             Mainloop.source_remove(this._timeout);
             this._timeout = null;
         }
-        const refreshTime = getSettings().get_int('refresh-time');
+        const refreshTime = Settings._getSettings().get_int('refresh-time');
         this._timeout = Mainloop.timeout_add_seconds(refreshTime, function () {
-            this.main();
+            this._main();
         }.bind(this));
     }
 
-    stop() {
+    _stop() {
+        // Disconnect signals
+        this._mullvad.disconnect(this._watch);
+
         // Kill our mainloop when we shut down
         if (this._timeout)
             Mainloop.source_remove(this._timeout);
@@ -134,37 +143,19 @@ const MullvadIndicator = GObject.registerClass({
     }
 });
 
-function getSettings() {
-    const GioSSS = Gio.SettingsSchemaSource;
-    const schemaSource = GioSSS.new_from_directory(
-        Me.dir.get_child('schemas').get_path(),
-        GioSSS.get_default(),
-        false,
-    );
-    const schemaObj = schemaSource.lookup(
-        'org.gnome.shell.extensions.mullvadindicator',
-        true,
-    );
-    if (!schemaObj)
-        throw new Error('cannot find schemas');
-
-    return new Gio.Settings({settings_schema: schemaObj});
-}
-
 function init() {
 }
 
-let mullvadIndicator;
+let _mullvadIndicator;
 
 function enable() {
-    mullvadIndicator = new MullvadIndicator();
+    _mullvadIndicator = new MullvadIndicator();
 }
 
 function disable() {
-    // Kill all queued Http requests
-    httpSession.abort();
-
-    mullvadStatusIndicator.stop();
-    mullvadStatusIndicator.destroy();
-    mullvadStatusIndicator = null;
+    // Kill our status indicator
+    _mullvadIndicator._stop();
+    _mullvadIndicator._item.destroy();
+    _mullvadIndicator.destroy();
+    _mullvadIndicator = null;
 }
