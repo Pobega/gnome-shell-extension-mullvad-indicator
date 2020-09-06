@@ -20,7 +20,7 @@ const _networkMonitor = Gio.NetworkMonitor.get_default();
 const _httpSession = new Soup.SessionAsync();
 Soup.Session.prototype.add_feature.call(
     _httpSession,
-    new Soup.ProxyResolverDefault()
+    new Soup.ProxyResolverDefault(),
 );
 _httpSession.timeout = 2;
 
@@ -119,9 +119,9 @@ var MullvadVPN = GObject.registerClass({
         api_response = JSON.parse(api_response);
 
         // Don't do anything if our GET failed
-        if (status_code === Soup.KnownStatusCode.IO_ERROR) {
+        if (status_code === Soup.KnownStatusCode.IO_ERROR)
             return;
-        }
+
 
         // if api_response is null we want to assume we're disconnected
         if (!api_response) {
