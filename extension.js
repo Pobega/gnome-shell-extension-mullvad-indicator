@@ -1,3 +1,4 @@
+const Gettext = imports.gettext;
 const GObject = imports.gi.GObject;
 const Gio = imports.gi.Gio;
 const Soup = imports.gi.Soup;
@@ -11,6 +12,10 @@ const PanelMenu = imports.ui.panelMenu;
 
 
 const API_URL = 'https://am.i.mullvad.net/json';
+
+Gettext.bindtextdomain("mullvadindicator", Me.dir.get_child("locale").get_path());
+Gettext.textdomain("mullvadindicator");
+const _ = Gettext.gettext;
 
 const DEFAULT_ITEMS = {
     server: {name: _('Server'), text: ''},
