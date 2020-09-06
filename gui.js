@@ -1,12 +1,10 @@
-const Clutter = imports.gi.Clutter;
+const { Clutter, Gio, St } = imports.gi;
 const Gettext = imports.gettext;
-const Gio = imports.gi.Gio;
-const St = imports.gi.St;
+const Mainloop = imports.mainloop;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 const Main = imports.ui.main;
-const Mainloop = imports.mainloop;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 const Util = imports.misc.util;

@@ -1,6 +1,8 @@
 const {Gio, GObject, Gtk} = imports.gi;
 const Gettext = imports.gettext;
 
+const Me = imports.misc.extensionUtils.getCurrentExtension();
+
 const ExtensionUtils = imports.misc.extensionUtils;
 const Extension = ExtensionUtils.getCurrentExtension();
 

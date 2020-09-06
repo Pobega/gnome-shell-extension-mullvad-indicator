@@ -1,13 +1,11 @@
 const Gettext = imports.gettext;
-const GObject = imports.gi.GObject;
-const Gio = imports.gi.Gio;
-const Soup = imports.gi.Soup;
+const { GObject, Gio, Soup } = imports.gi;
+const Mainloop = imports.mainloop;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Gui = Me.imports.gui;
 
 const Main = imports.ui.main;
-const Mainloop = imports.mainloop;
 const PanelMenu = imports.ui.panelMenu;
 
 
@@ -28,9 +26,9 @@ const DEFAULT_ITEMS = {
 const ICON_CONNECTED = 'mullvad-connected-symbolic';
 const ICON_DISCONNECTED = 'mullvad-disconnected-symbolic';
 
-let networkMonitor = Gio.NetworkMonitor.get_default();
+const networkMonitor = Gio.NetworkMonitor.get_default();
 
-let httpSession = new Soup.SessionAsync();
+const httpSession = new Soup.SessionAsync();
 Soup.Session.prototype.add_feature.call(httpSession, new Soup.ProxyResolverDefault());
 httpSession.timeout = 5;
 
@@ -83,7 +81,7 @@ const MullvadIndicator = GObject.registerClass({
 
     // Use our Soup.Session to ping am.i.mullvad.net
     _fetchConnectionInfo(callback) {
-        let message = Soup.Message.new('GET', API_URL);
+        const message = Soup.Message.new('GET', API_URL);
 
         // Fake CURL to prevent 403
         message.request_headers.append('User-Agent', 'curl/7.68.0');
@@ -93,14 +91,13 @@ const MullvadIndicator = GObject.registerClass({
         if (networkMonitor.connectivity !== Gio.NetworkConnectivity.FULL)
             callback(null, null, null);
 
-
         httpSession.queue_message(message, function (httpSession, message) {
             if (message.status_code !== 200) {
                 callback(message.status_code, null);
                 return;
             }
-            let responseJSON = message.response_body.data;
-            let response = JSON.parse(JSON.stringify(responseJSON));
+            const responseJSON = message.response_body.data;
+            const response = JSON.parse(JSON.stringify(responseJSON));
             callback(null, response);
         });
     }
@@ -145,7 +142,7 @@ const MullvadIndicator = GObject.registerClass({
             Mainloop.source_remove(this._timeout);
             this._timeout = null;
         }
-        let refreshTime = getSettings().get_int('refresh-time');
+        const refreshTime = getSettings().get_int('refresh-time');
         this._timeout = Mainloop.timeout_add_seconds(refreshTime, function () {
             this._refresh();
         }.bind(this));
@@ -155,8 +152,8 @@ const MullvadIndicator = GObject.registerClass({
     // Return a copy of this._connStatus with the items the user
     // opts not to see removed, for passing to Gui.update()
     _applyDisplaySettingsFilter() {
-        let settings = getSettings();
-        let displaySettings = {};
+        const settings = getSettings();
+        const displaySettings = {};
         if (settings.get_boolean('show-server'))
             displaySettings.server = this._connStatus.server;
         if (settings.get_boolean('show-country'))
@@ -180,13 +177,13 @@ const MullvadIndicator = GObject.registerClass({
 });
 
 function getSettings() {
-    let GioSSS = Gio.SettingsSchemaSource;
-    let schemaSource = GioSSS.new_from_directory(
+    const GioSSS = Gio.SettingsSchemaSource;
+    const schemaSource = GioSSS.new_from_directory(
         Me.dir.get_child('schemas').get_path(),
         GioSSS.get_default(),
         false
     );
-    let schemaObj = schemaSource.lookup(
+    const schemaObj = schemaSource.lookup(
         'org.gnome.shell.extensions.amimullvad',
         true
     );
