@@ -1,4 +1,5 @@
 const Clutter = imports.gi.Clutter;
+const Gettext = imports.gettext;
 const Gio = imports.gi.Gio;
 const St = imports.gi.St;
 
@@ -12,6 +13,10 @@ const Util = imports.misc.util;
 
 const ICON_CONNECTED = 'mullvad-connected-symbolic';
 const ICON_DISCONNECTED = 'mullvad-disconnected-symbolic';
+
+Gettext.bindtextdomain("mullvadindicator", Me.dir.get_child("locale").get_path());
+Gettext.textdomain("mullvadindicator");
+const _ = Gettext.gettext;
 
 function init(object) {
     // Taskbar icon
@@ -133,7 +138,7 @@ function update(object, items_to_show) {
 
     let vpnLabel = new St.Label({
         style_class: object._connected ? 'vpn-info-vpn-on' : 'vpn-info-vpn-off',
-        text: object._connected ? 'Connected' : 'Disconnected',
+        text: object._connected ? _('Connected') : _('Disconnected'),
     });
     vpnInfoRow.add_actor(vpnLabel);
 
