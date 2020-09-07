@@ -57,9 +57,15 @@ const MullvadIndicator = GObject.registerClass({
         // Content Inside the box
         this._item.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 
-        // Add elements to the UI
+        // Add icon to system tray at position 0
         AggregateMenu._indicators.insert_child_at_index(this, 0);
-        AggregateMenu.menu.addMenuItem(this.menu, 4);
+
+        // Add dropdown menu below the network index.
+        // This is a pretty hacky solution, thanks to @andyholmes on
+        // #extensions:gnome.org for helping me with this.
+        let menuItems = AggregateMenu.menu._getMenuItems();
+        let networkMenuIndex = menuItems.indexOf(AggregateMenu._network.menu) || 3;
+        AggregateMenu.menu.addMenuItem(this.menu, networkMenuIndex + 1);
 
         this._buildBottomMenu();
 
