@@ -1,3 +1,6 @@
-# mullvad-gnome-indicator
+# Mullvad Indicator
 
-Special thanks to [LinxGem33](https://github.com/LinxGem33) whose [IP Finder](https://extensions.gnome.org/extension/2983/ip-finder/) layout code I relied on heavily.
+System tray indicator for Mullvad VPN. Allows you to monitor your connection right from your system tray.
+
+Special thanks:
+ * @andyholmes on #extensions:gnome.org
