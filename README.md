@@ -6,3 +6,4 @@ System tray indicator for Mullvad VPN. Allows you to monitor your connection rig
 
 Special thanks:
  * @andyholmes on #extensions:gnome.org
+ * taint2323 for testing
