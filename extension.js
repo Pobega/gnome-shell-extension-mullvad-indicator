@@ -43,8 +43,7 @@ const MullvadIndicator = GObject.registerClass({
     _initGui() {
         // Add the indicator to the indicator bar
         this._indicator = this._addIndicator();
-        this._indicator.gicon = Gio.icon_new_for_string(`${Me.path}/icons/mullvad-disconnected-symbolic.svg`);
-        this._indicator.visible = true;
+        this._indicator.visible = false;
 
         // Build a menu
 
@@ -76,10 +75,10 @@ const MullvadIndicator = GObject.registerClass({
         // Destroy and recreate our inner menu
         this._item.destroy();
 
-        let icon = this._mullvad.connected ? ICON_CONNECTED : ICON_DISCONNECTED;
-
         // Update systray icon first
+        let icon = this._mullvad.connected ? ICON_CONNECTED : ICON_DISCONNECTED;
         this._indicator.gicon = Gio.icon_new_for_string(`${Me.path}/icons/${icon}.svg`);
+        this._indicator.visible = true;
 
         // Main item with the header section
         this._item = new PopupMenu.PopupSubMenuMenuItem(STATUS_STARTING, true);
