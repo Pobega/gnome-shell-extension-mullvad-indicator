@@ -26,31 +26,42 @@ class MullvadIndicatorPrefsWidget extends Gtk.Box {
 
         this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.mullvadindicator');
 
-        this._addSpinButton(
-            _('Automatic refresh time (in seconds)'),
-            'refresh-time',
-        );
+        let uiBuilder = [
+            {
+                labelText: _('Automatic refresh time (in seconds)'),
+                settingName: 'refresh-time',
+                uiFunction: this._addSpinButton,
+            },
+            {
+                labelText: _('Show currently connected server'),
+                settingName: 'show-server',
+                uiFunction: this._addSwitch,
+            },
+            {
+                labelText: _('Show currently connected servers country'),
+                settingName: 'show-country',
+                uiFunction: this._addSwitch,
+            },
+            {
+                labelText: _('Show currently connected servers city'),
+                settingName: 'show-city',
+                uiFunction: this._addSwitch,
+            },
+            {
+                labelText: _('Show your current IP address'),
+                settingName: 'show-ip',
+                uiFunction: this._addSwitch,
+            },
+            {
+                labelText: _('Show your VPN type (WireGuard/OpenVPN)'),
+                settingName: 'show-type',
+                uiFunction: this._addSwitch,
+            },
+        ];
 
-        this._addSwitch(
-            _('Show currently connected server'),
-            'show-server'
-        );
-        this._addSwitch(
-            _('Show currently connected servers country'),
-            'show-country'
-        );
-        this._addSwitch(
-            _('Show currently connected servers city'),
-            'show-city'
-        );
-        this._addSwitch(
-            _('Show your current IP address'),
-            'show-ip'
-        );
-        this._addSwitch(
-            _('Show your VPN type (WireGuard/OpenVPN)'),
-            'show-type'
-        );
+        for (let uiElem of uiBuilder) {
+            uiElem.uiFunction.bind(this)(uiElem.labelText, uiElem.settingName);
+        }
 
         this.show_all();
     }
