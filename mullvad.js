@@ -45,6 +45,7 @@ var MullvadVPN = GObject.registerClass({
     _init(params = {}) {
         super._init(params);
 
+        this._settings = Settings._getSettings();
 
         this._initConnStatus();
         this._connectNetworkSignals();
@@ -148,17 +149,16 @@ var MullvadVPN = GObject.registerClass({
     // Return a copy of this._connStatus with the items the user
     // opts not to see removed, used by the _connStatus getter
     _detailedStatusFiltered() {
-        const settings = Settings._getSettings();
         const displaySettings = {};
-        if (settings.get_boolean('show-server'))
+        if (this._settings.get_boolean('show-server'))
             displaySettings.server = this._connStatus.server;
-        if (settings.get_boolean('show-country'))
+        if (this._settings.get_boolean('show-country'))
             displaySettings.country = this._connStatus.country;
-        if (settings.get_boolean('show-city'))
+        if (this._settings.get_boolean('show-city'))
             displaySettings.city = this._connStatus.city;
-        if (settings.get_boolean('show-ip'))
+        if (this._settings.get_boolean('show-ip'))
             displaySettings.ip = this._connStatus.ip;
-        if (settings.get_boolean('show-type'))
+        if (this._settings.get_boolean('show-type'))
             displaySettings.type = this._connStatus.type;
         return displaySettings;
     }

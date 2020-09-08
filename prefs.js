@@ -28,6 +28,16 @@ class MullvadIndicatorPrefsWidget extends Gtk.Box {
 
         let uiBuilder = [
             {
+                labelText: _('Display indicator icon'),
+                settingName: 'show-icon',
+                uiFunction: this._addSwitch,
+            },
+            {
+                labelText: _('Show in system menu'),
+                settingName: 'show-menu',
+                uiFunction: this._addSwitch,
+            },
+            {
                 labelText: _('Automatic refresh time (in seconds)'),
                 settingName: 'refresh-time',
                 uiFunction: this._addSpinButton,

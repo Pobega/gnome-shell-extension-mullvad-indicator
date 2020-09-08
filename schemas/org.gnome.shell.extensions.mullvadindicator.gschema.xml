@@ -4,6 +4,22 @@
     <schema id="org.gnome.shell.extensions.mullvadindicator"
         path="/org/gnome/shell/extensions/mullvadindicator/">
 
+        <key type="b" name="show-icon">
+            <default>true</default>
+            <summary>Show Icon</summary>
+            <description>
+                    Display indicator icon in system tray
+            </description>
+        </key>
+
+        <key type="b" name="show-menu">
+            <default>true</default>
+            <summary>Show Menu</summary>
+            <description>
+                    Show in system dropdown menu
+            </description>
+        </key>
+
         <key type="i" name="refresh-time">
             <default>600</default>
             <summary>Refresh time</summary>

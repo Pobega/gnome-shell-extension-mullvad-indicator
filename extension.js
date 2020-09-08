@@ -51,7 +51,7 @@ const MullvadIndicator = GObject.registerClass({
         this._prefSignals = [];
 
         // A list of prefs we want to immediately update the GUI for when changed
-        let prefs = ['show-server', 'show-country', 'show-city', 'show-type', 'show-ip'];
+        let prefs = ['show-icon', 'show-menu', 'show-server', 'show-country', 'show-city', 'show-type', 'show-ip'];
 
         // Connect each signal to the updateGui function
         for (let pref of prefs) {
@@ -68,7 +68,6 @@ const MullvadIndicator = GObject.registerClass({
     _disconnectPrefSignals() {
         for (let signal of this._prefSignals)
             this._settings.disconnect(signal);
-
     }
 
     _initGui() {
@@ -91,11 +90,7 @@ const MullvadIndicator = GObject.registerClass({
         AggregateMenu._indicators.insert_child_at_index(this, 0);
 
         // Add dropdown menu below the network index.
-        // This is a pretty hacky solution, thanks to @andyholmes on
-        // #extensions:gnome.org for helping me with this.
-        let menuItems = AggregateMenu.menu._getMenuItems();
-        let networkMenuIndex = menuItems.indexOf(AggregateMenu._network.menu) || 3;
-        AggregateMenu.menu.addMenuItem(this.menu, networkMenuIndex + 1);
+        AggregateMenu.menu.addMenuItem(this.menu, this._getNetworkMenuIndex() + 1);
 
         this._buildBottomMenu();
 
@@ -106,10 +101,14 @@ const MullvadIndicator = GObject.registerClass({
         // Destroy and recreate our inner menu
         this._item.destroy();
 
+        // Hide or unhide our menu
+        this._settings.get_boolean('show-menu') ? this.menu.actor.show() : this.menu.actor.hide();
+
         // Update systray icon first
         let icon = this._mullvad.connected ? ICON_CONNECTED : ICON_DISCONNECTED;
         this._indicator.gicon = Gio.icon_new_for_string(`${Me.path}/icons/${icon}.svg`);
-        this._indicator.visible = true;
+        // Hide or unhide our systray icon
+        this._settings.get_boolean('show-icon') ? this._indicator.visible = true : this._indicator.visible = false;
 
         // Main item with the header section
         this._item = new PopupMenu.PopupSubMenuMenuItem(STATUS_STARTING, true);
@@ -121,9 +120,6 @@ const MullvadIndicator = GObject.registerClass({
 
         // Content Inside the box
         this._item.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
-
-        // Add elements to the UI
-        AggregateMenu.menu.addMenuItem(this.menu, 4);
 
         let detailedStatus = this._mullvad.detailed_status;
         for (let item in detailedStatus) {
@@ -154,6 +150,14 @@ const MullvadIndicator = GObject.registerClass({
             Util.spawnCommandLine('gnome-extensions prefs mullvadindicator@pobega.github.com');
         });
         this._item.menu.addMenuItem(settingsItem);
+    }
+
+    _getNetworkMenuIndex() {
+        // This is a pretty hacky solution, thanks to @andyholmes on
+        // #extensions:gnome.org for helping me with this.
+        let menuItems = AggregateMenu.menu._getMenuItems();
+        let networkMenuIndex = menuItems.indexOf(AggregateMenu._network.menu) || 3;
+        return networkMenuIndex;
     }
 
     _main() {
