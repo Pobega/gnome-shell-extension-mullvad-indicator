@@ -30,14 +30,45 @@ const MullvadIndicator = GObject.registerClass({
     _init() {
         super._init(0);
 
-        this._mullvad = new Mullvad.MullvadVPN();
-        this._initGui();
+        // Get our settings
+        this._settings = Settings._getSettings();
 
+        // Instantiate our Mullvad object
+        this._mullvad = new Mullvad.MullvadVPN();
+
+        // Connect our signals
+        this._connectPrefSignals();
         this._watch = this._mullvad.connect('status-changed', _mullvad => {
-            this._update();
+            this._updateGui();
         });
 
+        // Start our GUI and enter our main loop
+        this._initGui();
         this._main();
+    }
+
+    _connectPrefSignals() {
+        this._prefSignals = [];
+
+        // A list of prefs we want to immediately update the GUI for when changed
+        let prefs = ['show-server', 'show-country', 'show-city', 'show-type', 'show-ip'];
+
+        // Connect each signal to the updateGui function
+        for (let pref of prefs) {
+            this._prefSignals.push(this._settings.connect(
+                `changed::${pref}`,
+                _setting => {
+                    this._updateGui();
+                },
+            ));
+        }
+
+    }
+
+    _disconnectPrefSignals() {
+        for (let signal of this._prefSignals)
+            this._settings.disconnect(signal);
+
     }
 
     _initGui() {
@@ -68,10 +99,10 @@ const MullvadIndicator = GObject.registerClass({
 
         this._buildBottomMenu();
 
-        this._update();
+        this._updateGui();
     }
 
-    _update() {
+    _updateGui() {
         // Destroy and recreate our inner menu
         this._item.destroy();
 
@@ -140,6 +171,7 @@ const MullvadIndicator = GObject.registerClass({
     _stop() {
         // Disconnect signals
         this._mullvad.disconnect(this._watch);
+        this._disconnectPrefSignals();
 
         // Kill our mainloop when we shut down
         if (this._timeout)

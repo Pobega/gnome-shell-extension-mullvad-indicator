@@ -2,7 +2,7 @@ const Gio = imports.gi.Gio;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
-function _getSettings() {
+function _getSchema() {
     const GioSSS = Gio.SettingsSchemaSource;
     const schemaSource = GioSSS.new_from_directory(
         Me.dir.get_child('schemas').get_path(),
@@ -13,6 +13,13 @@ function _getSettings() {
         'org.gnome.shell.extensions.mullvadindicator',
         true,
     );
+
+    return schemaObj;
+}
+
+function _getSettings() {
+    const schemaObj = _getSchema();
+
     if (!schemaObj)
         throw new Error('cannot find schemas');
 

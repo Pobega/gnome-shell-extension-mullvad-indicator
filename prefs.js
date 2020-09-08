@@ -59,9 +59,9 @@ class MullvadIndicatorPrefsWidget extends Gtk.Box {
             },
         ];
 
-        for (let uiElem of uiBuilder) {
+        for (let uiElem of uiBuilder)
             uiElem.uiFunction.bind(this)(uiElem.labelText, uiElem.settingName);
-        }
+
 
         this.show_all();
     }
@@ -113,7 +113,7 @@ class MullvadIndicatorPrefsWidget extends Gtk.Box {
         box.pack_start(label, false, true, 0);
         box.pack_end(toggle, false, true, 0);
 
-        this.add(box)
+        this.add(box);
     }
 });
 
