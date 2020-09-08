@@ -26,57 +26,83 @@ class MullvadIndicatorPrefsWidget extends Gtk.Box {
 
         this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.mullvadindicator');
 
-        let refreshTimeLabel = new Gtk.Label({
-            label: _('Automatic refresh time (in seconds)'),
+        this._addSpinButton(
+            _('Automatic refresh time (in seconds)'),
+            'refresh-time',
+        );
+
+        this._addSwitch(
+            _('Show currently connected server'),
+            'show-server'
+        );
+        this._addSwitch(
+            _('Show currently connected servers country'),
+            'show-country'
+        );
+        this._addSwitch(
+            _('Show currently connected servers city'),
+            'show-city'
+        );
+        this._addSwitch(
+            _('Show your current IP address'),
+            'show-ip'
+        );
+        this._addSwitch(
+            _('Show your VPN type (WireGuard/OpenVPN)'),
+            'show-type'
+        );
+
+        this.show_all();
+    }
+
+    _addSpinButton(labelText, settingName) {
+        // Bounding box
+        let box = new Gtk.Box();
+        box.set_orientation(Gtk.Orientation.HORIZONTAL);
+
+        // Build label
+        let label = new Gtk.Label({
+            label: labelText,
         });
 
+        // Build spinButton
         let spinButton = new Gtk.SpinButton();
         spinButton.set_sensitive(true);
         spinButton.set_range(1, 9999);
-        spinButton.set_value(this._settings.get_int('refresh-time'));
+        spinButton.set_value(this._settings.get_int(settingName));
         spinButton.set_increments(10, 10);
 
-        this._settings.bind('refresh-time', spinButton, 'value', Gio.SettingsBindFlags.DEFAULT);
+        // Bind spinButton to settingName
+        this._settings.bind(settingName, spinButton, 'value', Gio.SettingsBindFlags.DEFAULT);
 
-        let hBox = new Gtk.Box();
-        hBox.set_orientation(Gtk.Orientation.HORIZONTAL);
+        // Pack it into the box
+        box.pack_start(label, false, false, 0);
+        box.pack_end(spinButton, false, false, 0);
 
-        hBox.pack_start(refreshTimeLabel, false, false, 0);
-        hBox.pack_end(spinButton, false, false, 0);
+        this.add(box);
+    }
 
-        this.add(hBox);
+    _addSwitch(labelText, settingName) {
+        // Bounding box
+        let box = new Gtk.Box();
+        box.set_orientation(Gtk.Orientation.HORIZONTAL);
 
-        let check = new Gtk.CheckButton({
-            label: _('Show currently connected server'),
+        // Build spinButton
+        let label = new Gtk.Label({
+            label: labelText,
         });
-        this._settings.bind('show-server', check, 'active', Gio.SettingsBindFlags.DEFAULT);
-        this.add(check);
 
-        check = new Gtk.CheckButton({
-            label: _('Show currently connected servers country'),
-        });
-        this._settings.bind('show-country', check, 'active', Gio.SettingsBindFlags.DEFAULT);
-        this.add(check);
+        // Build switch
+        let toggle = new Gtk.Switch();
 
-        check = new Gtk.CheckButton({
-            label: _('Show currently connected servers city'),
-        });
-        this._settings.bind('show-city', check, 'active', Gio.SettingsBindFlags.DEFAULT);
-        this.add(check);
+        // Bind spinButton to settingName
+        this._settings.bind(settingName, toggle, 'active', Gio.SettingsBindFlags.DEFAULT);
 
-        check = new Gtk.CheckButton({
-            label: _('Show your current IP address'),
-        });
-        this._settings.bind('show-ip', check, 'active', Gio.SettingsBindFlags.DEFAULT);
-        this.add(check);
+        // Pack it into the box
+        box.pack_start(label, false, true, 0);
+        box.pack_end(toggle, false, true, 0);
 
-        check = new Gtk.CheckButton({
-            label: _('Show your VPN type (WireGuard/OpenVPN)'),
-        });
-        this._settings.bind('show-type', check, 'active', Gio.SettingsBindFlags.DEFAULT);
-        this.add(check);
-
-        this.show_all();
+        this.add(box)
     }
 });
 
