@@ -4,5 +4,7 @@
   "uuid": "mullvadindicator@pobega.github.com",
   "shell-version": [
     "3.36"
-  ]
+  ],
+  "url": "https://github.com/Pobega/gnome-shell-extension-mullvad-indicator",
+  "version": 2
 }
