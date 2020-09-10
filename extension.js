@@ -139,6 +139,9 @@ const MullvadIndicator = GObject.registerClass({
     }
 
     _buildBottomMenu() {
+        // Separator line
+        this._item.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
+
         // Manual refresh menu item
         let refreshItem = new PopupMenu.PopupMenuItem(_('Refresh'));
         refreshItem.actor.connect('button-press-event', () => {
