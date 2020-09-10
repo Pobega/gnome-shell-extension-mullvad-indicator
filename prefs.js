@@ -8,7 +8,7 @@ let preferences;
 
 const MullvadIndicatorPrefsWidget = class {
     constructor() {
-        this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.mullvadindicator');
+        this._settings = ExtensionUtils.getSettings('org.gnome.Shell.Extensions.MullvadIndicator');
     }
 
     buildWidget() {

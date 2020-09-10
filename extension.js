@@ -33,7 +33,7 @@ const MullvadIndicator = GObject.registerClass({
         super._init(0);
 
         // Get our settings
-        this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.mullvadindicator');
+        this._settings = ExtensionUtils.getSettings('org.gnome.Shell.Extensions.MullvadIndicator');
 
         // Instantiate our Mullvad object
         this._mullvad = new Mullvad.MullvadVPN();

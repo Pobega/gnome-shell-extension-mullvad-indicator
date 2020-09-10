@@ -47,7 +47,7 @@ var MullvadVPN = GObject.registerClass({
     _init(params = {}) {
         super._init(params);
 
-        this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.mullvadindicator');
+        this._settings = ExtensionUtils.getSettings('org.gnome.Shell.Extensions.MullvadIndicator');
 
         this._initConnStatus();
         this._connectNetworkSignals();

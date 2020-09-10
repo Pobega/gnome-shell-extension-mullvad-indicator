@@ -1,0 +1,90 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: org.gnome.Shell.Extensions.MullvadIndicator\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-09-10 10:25-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: extension.js:23
+msgid "Initializing"
+msgstr ""
+
+#: extension.js:24
+msgid "Connected"
+msgstr ""
+
+#: extension.js:25
+msgid "Disconnected"
+msgstr ""
+
+#: extension.js:143
+msgid "Refresh"
+msgstr ""
+
+#: extension.js:150
+msgid "Settings"
+msgstr ""
+
+#: mullvad.js:14
+msgid "Server"
+msgstr ""
+
+#: mullvad.js:15
+msgid "Country"
+msgstr ""
+
+#: mullvad.js:16
+msgid "City"
+msgstr ""
+
+#: mullvad.js:17
+msgid "IP Address"
+msgstr ""
+
+#: mullvad.js:18
+msgid "VPN Type"
+msgstr ""
+
+#: prefs.ui:35
+msgid "Display indicator icon"
+msgstr ""
+
+#: prefs.ui:70
+msgid "Show in system menu"
+msgstr ""
+
+#: prefs.ui:106
+msgid "Automatic refresh time (in seconds)"
+msgstr ""
+
+#: prefs.ui:141
+msgid "Show currently connected server"
+msgstr ""
+
+#: prefs.ui:176
+msgid "Show currently connected server's country"
+msgstr ""
+
+#: prefs.ui:211
+msgid "Show currently connected server's city"
+msgstr ""
+
+#: prefs.ui:246
+msgid "Show your current IP address"
+msgstr ""
+
+#: prefs.ui:281
+msgid "Show your VPN type (WireGuard/OpenVPN)"
+msgstr ""
