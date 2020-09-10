@@ -1,17 +1,10 @@
 const {Gio, GObject, Gtk} = imports.gi;
-const Gettext = imports.gettext;
 
 const ExtensionUtils = imports.misc.extensionUtils;
-/*
-const Me = imports.misc.extensionUtils.getCurrentExtension();
 
-
-Gettext.bindtextdomain('mullvadindicator', Me.dir.get_child('locale').get_path());
-Gettext.textdomain('mullvadindicator');
-const _ = Gettext.gettext;
-*/
 
 let preferences;
+
 
 const MullvadIndicatorPrefsWidget = class {
     constructor() {

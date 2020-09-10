@@ -2,18 +2,20 @@ const {GObject, Gio, Soup} = imports.gi;
 const Gettext = imports.gettext;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Settings = Me.imports.settings;
+
+const ExtensionUtils = imports.misc.extensionUtils;
+
 
 Gettext.bindtextdomain('mullvadindicator', Me.dir.get_child('locale').get_path());
 Gettext.textdomain('mullvadindicator');
 const _ = Gettext.gettext;
 
 const DEFAULT_ITEMS = {
-    server: {name: _('Server'), text: ''},
-    country: {name: _('Country'), text: ''},
-    city: {name: _('City'), text: ''},
-    ip: {name: _('IP Address'), text: ''},
-    type: {name: _('VPN Type'), text: ''},
+    server: {name: _('Server'), text: '', gSetting: 'show-server'},
+    country: {name: _('Country'), text: '', gSetting: 'show-country'},
+    city: {name: _('City'), text: '', gSetting: 'show-city'},
+    ip: {name: _('IP Address'), text: '', gSetting: 'show-ip'},
+    type: {name: _('VPN Type'), text: '', gSetting: 'show-type'},
 };
 
 const _networkMonitor = Gio.NetworkMonitor.get_default();
@@ -24,6 +26,7 @@ Soup.Session.prototype.add_feature.call(
     new Soup.ProxyResolverDefault(),
 );
 _httpSession.timeout = 2;
+
 
 var MullvadVPN = GObject.registerClass({
     GTypeName: 'MullvadVPN',
@@ -41,11 +44,10 @@ var MullvadVPN = GObject.registerClass({
         'status-changed': {},
     },
 }, class MullvadVPN extends GObject.Object {
-    // Initialize this._connStatus and connect to GNetworkMonitor
     _init(params = {}) {
         super._init(params);
 
-        this._settings = Settings._getSettings();
+        this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.mullvadindicator');
 
         this._initConnStatus();
         this._connectNetworkSignals();
@@ -93,6 +95,7 @@ var MullvadVPN = GObject.registerClass({
     }
 
     // Use Soup.Session to GET am.i.mullvad.net/json
+    // The result is used to decide whether or not we're connected to Mullvad
     _fetchConnectionInfo(callback) {
         const request = new Soup.Message({
             method: 'GET',
@@ -121,6 +124,7 @@ var MullvadVPN = GObject.registerClass({
         api_response = JSON.parse(api_response);
 
         // Don't do anything if our GET failed
+        // This happens when switching VPN status, but will eventually resolve
         if (status_code === Soup.KnownStatusCode.IO_ERROR)
             return;
 
@@ -150,16 +154,10 @@ var MullvadVPN = GObject.registerClass({
     // opts not to see removed, used by the _connStatus getter
     _detailedStatusFiltered() {
         const displaySettings = {};
-        if (this._settings.get_boolean('show-server'))
-            displaySettings.server = this._connStatus.server;
-        if (this._settings.get_boolean('show-country'))
-            displaySettings.country = this._connStatus.country;
-        if (this._settings.get_boolean('show-city'))
-            displaySettings.city = this._connStatus.city;
-        if (this._settings.get_boolean('show-ip'))
-            displaySettings.ip = this._connStatus.ip;
-        if (this._settings.get_boolean('show-type'))
-            displaySettings.type = this._connStatus.type;
+        for (let item in this._connStatus) {
+            if (this._settings.get_boolean(this._connStatus[item].gSetting))
+                displaySettings[item] = this._connStatus[item];
+        }
         return displaySettings;
     }
 

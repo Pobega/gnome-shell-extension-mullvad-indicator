@@ -4,13 +4,14 @@ const Mainloop = imports.mainloop;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Mullvad = Me.imports.mullvad;
-const Settings = Me.imports.settings;
 
 const Main = imports.ui.main;
 const AggregateMenu = Main.panel.statusArea.aggregateMenu;
+const ExtensionUtils = imports.misc.extensionUtils;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 const Util = imports.misc.util;
+
 
 Gettext.bindtextdomain('mullvadindicator', Me.dir.get_child('locale').get_path());
 Gettext.textdomain('mullvadindicator');
@@ -23,6 +24,7 @@ const STATUS_STARTING = _('Initializing');
 const STATUS_CONNECTED = _('Connected');
 const STATUS_DISCONNECTED = _('Disconnected');
 
+
 const MullvadIndicator = GObject.registerClass({
     GTypeName: 'MullvadIndicator',
 }, class MullvadIndicator extends PanelMenu.SystemIndicator {
@@ -31,7 +33,7 @@ const MullvadIndicator = GObject.registerClass({
         super._init(0);
 
         // Get our settings
-        this._settings = Settings._getSettings();
+        this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.mullvadindicator');
 
         // Instantiate our Mullvad object
         this._mullvad = new Mullvad.MullvadVPN();
@@ -125,11 +127,11 @@ const MullvadIndicator = GObject.registerClass({
         for (let item in detailedStatus) {
             let title = detailedStatus[item].name;
             let body = detailedStatus[item].text;
-            // Don't add menu items for undefined values
+            // Don't add menu items for undefined or empty values
             if (body) {
                 let statusText = `${title}: ${body}`;
                 let menuItem = new PopupMenu.PopupMenuItem(statusText);
-                this._disconnectAction = this._item.menu.addMenuItem(menuItem);
+                this._item.menu.addMenuItem(menuItem);
             }
         }
 
@@ -137,7 +139,7 @@ const MullvadIndicator = GObject.registerClass({
     }
 
     _buildBottomMenu() {
-        // Refresh menu item
+        // Manual refresh menu item
         let refreshItem = new PopupMenu.PopupMenuItem(_('Refresh'));
         refreshItem.actor.connect('button-press-event', () => {
             this._mullvad._pollMullvad();
@@ -155,18 +157,23 @@ const MullvadIndicator = GObject.registerClass({
     _getNetworkMenuIndex() {
         // This is a pretty hacky solution, thanks to @andyholmes on
         // #extensions:gnome.org for helping me with this.
+        //
+        // Return the current index of the networking menu in Gnome's
+        // AggregateMenu. Normally defaults to '3' but other installed
+        // extensions may adjust this index.
         let menuItems = AggregateMenu.menu._getMenuItems();
         let networkMenuIndex = menuItems.indexOf(AggregateMenu._network.menu) || 3;
         return networkMenuIndex;
     }
 
     _main() {
+        // Poll Mullvad automatically on a set timeout
         this._mullvad._pollMullvad();
         if (this._timeout) {
             Mainloop.source_remove(this._timeout);
             this._timeout = null;
         }
-        const refreshTime = Settings._getSettings().get_int('refresh-time');
+        const refreshTime = this._settings.get_int('refresh-time');
         this._timeout = Mainloop.timeout_add_seconds(refreshTime, function () {
             this._main();
         }.bind(this));
@@ -194,7 +201,6 @@ function enable() {
 }
 
 function disable() {
-    // Kill our status indicator
     _mullvadIndicator._stop();
     _mullvadIndicator._item.destroy();
     _mullvadIndicator.destroy();
