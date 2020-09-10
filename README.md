@@ -22,6 +22,6 @@ In addition you're of course welcome to fork this repo if you'd like, but please
 
 ## Special thanks
  * The authors of http://gjs.guide/
- * taint2323 for testing and being patient with me when I broke the master branch :')
+ * [zacius](https://github.com/zacius) for testing and being patient with me when I broke the master branch :')
  * [andyholmes](https://github.com/andyholmes/) on #extensions:gnome.org who helped with some particularly nasty code issues as well as reading his projects to learn Gjs.
  * [quasipedia](https://github.com/quasipedia) whose [NordVPN Gnome extension](https://extensions.gnome.org/extension/1347/nordvpn-status/) I relied on heavily.
