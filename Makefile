@@ -12,4 +12,4 @@ zip:
 		extension.js mullvad.js prefs.js prefs.ui \
 		metadata.json \
 		schemas locale icons \
-		LICENSE
+		LICENSE README.md
