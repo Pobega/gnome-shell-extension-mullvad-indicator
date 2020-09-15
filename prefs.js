@@ -1,5 +1,7 @@
 const {Gio, GObject, Gtk} = imports.gi;
 
+const Me = imports.misc.extensionUtils.getCurrentExtension();
+
 const ExtensionUtils = imports.misc.extensionUtils;
 
 
@@ -13,7 +15,7 @@ const MullvadIndicatorPrefsWidget = class {
 
     buildWidget() {
         this._builder = new Gtk.Builder();
-        this._builder.add_from_file('prefs.ui');
+        this._builder.add_from_file(`${Me.path}/prefs.ui`);
         this._widget = this._builder.get_object('prefsWidget');
 
         this._connectSignals();
