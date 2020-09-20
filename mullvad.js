@@ -23,7 +23,7 @@ const _networkMonitor = Gio.NetworkMonitor.get_default();
 const _httpSession = new Soup.SessionAsync();
 Soup.Session.prototype.add_feature.call(
     _httpSession,
-    new Soup.ProxyResolverDefault(),
+    new Soup.ProxyResolverDefault()
 );
 _httpSession.timeout = 2;
 

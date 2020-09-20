@@ -61,7 +61,7 @@ const MullvadIndicator = GObject.registerClass({
                 `changed::${pref}`,
                 _setting => {
                     this._updateGui();
-                },
+                }
             ));
         }
 
@@ -104,6 +104,7 @@ const MullvadIndicator = GObject.registerClass({
         this._item.destroy();
 
         // Hide or unhide our menu
+        /* eslint no-unused-expressions: ["error", { "allowTernary": true }]*/
         this._settings.get_boolean('show-menu') ? this.menu.actor.show() : this.menu.actor.hide();
 
         // Update systray icon first
