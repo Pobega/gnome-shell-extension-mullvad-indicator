@@ -53,7 +53,7 @@ const MullvadIndicator = GObject.registerClass({
         this._prefSignals = [];
 
         // A list of prefs we want to immediately update the GUI for when changed
-        let prefs = ['show-icon', 'show-menu', 'show-server', 'show-country', 'show-city', 'show-type', 'show-ip'];
+        let prefs = ['show-icon', 'show-menu', 'show-server', 'show-country', 'show-city', 'show-type', 'show-ip', 'connect-command-type', 'service-name'];
 
         // Connect each signal to the updateGui function
         for (let pref of prefs) {
@@ -143,6 +143,13 @@ const MullvadIndicator = GObject.registerClass({
         // Separator line
         this._item.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 
+        // Connect/Disconnect menu item
+        const showConnectButton = this._settings.get_boolean('show-connect-button');
+        if (showConnectButton) {
+            let connectItem = this._makeConnectButton();
+            this._item.menu.addMenuItem(connectItem);
+        }
+
         // Manual refresh menu item
         let refreshItem = new PopupMenu.PopupMenuItem(_('Refresh'));
         refreshItem.actor.connect('button-press-event', () => {
@@ -156,6 +163,32 @@ const MullvadIndicator = GObject.registerClass({
             Util.spawnCommandLine('gnome-extensions prefs mullvadindicator@pobega.github.com');
         });
         this._item.menu.addMenuItem(settingsItem);
+    }
+
+    _makeConnectButton() {
+        const connectLabel = this._mullvad.connected
+            ? _('Disconnect')
+            : _('Connect');
+
+        const connectCommandType = this._settings.get_string('connect-command-type');
+        const systemdService = this._settings.get_string('service-name');
+        let connectCommand;
+        if (connectCommandType == 'mullvad') {
+            connectCommand = this._mullvad.connected
+                ? 'mullvad disconnect'
+                : 'mullvad connect';
+        } else {
+            connectCommand = this._mullvad.connected
+                ? `systemctl stop ${systemdService}`
+                : `systemctl start ${systemdService}`;
+        }
+
+        const connectItem = new PopupMenu.PopupMenuItem(connectLabel);
+        connectItem.actor.connect('button-press-event', () => {
+            Util.spawnCommandLine(connectCommand);
+            this._mullvad._pollMullvad();
+        });
+        return connectItem;
     }
 
     _getNetworkMenuIndex() {

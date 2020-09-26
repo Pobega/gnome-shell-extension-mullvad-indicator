@@ -119,6 +119,140 @@
       </packing>
     </child>
     <child>
+      <object class="GtkSeparator">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">3</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkBox" id="showConnectButtonBox">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <child>
+          <object class="GtkLabel" id="showConnectButtonLabel">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Connect/Disconnect from Menu</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSwitch" id="showConnectButtonSwitch">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="pack_type">end</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">4</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkBox" id="connectButtonKindBox">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <child>
+          <object class="GtkComboBoxText" id="connectButtonKindComboBoxText">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <items>
+              <item id="mullvad" translatable="yes">Mullvad CLI</item>
+              <item id="systemd" translatable="yes">Systemd</item>
+            </items>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="connectButtonKindLabel">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Mullvad Application</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">5</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkBox" id="mullvadSystemdServiceName">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <child>
+          <object class="GtkLabel" id="mullvadSystemdServiceNameLabel">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Systemd service name </property>
+            <property name="use_markup">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkEntry" id="mullvadSystemdServiceNameTextbox">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="width_chars">20</property>
+            <property name="placeholder_text" translatable="yes">wg-quick@server</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="pack_type">end</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">6</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkSeparator">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">7</property>
+      </packing>
+    </child>
+    <child>
       <object class="GtkBox" id="showServerBox">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
@@ -138,6 +272,7 @@
           <object class="GtkLabel" id="showServerLabel">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="tooltip_text" translatable="yes">dddd</property>
             <property name="label" translatable="yes">Show currently connected server</property>
           </object>
           <packing>
@@ -150,7 +285,7 @@
       <packing>
         <property name="expand">False</property>
         <property name="fill">True</property>
-        <property name="position">3</property>
+        <property name="position">8</property>
       </packing>
     </child>
     <child>
@@ -185,7 +320,7 @@
       <packing>
         <property name="expand">False</property>
         <property name="fill">True</property>
-        <property name="position">4</property>
+        <property name="position">9</property>
       </packing>
     </child>
     <child>
@@ -220,7 +355,7 @@
       <packing>
         <property name="expand">False</property>
         <property name="fill">True</property>
-        <property name="position">5</property>
+        <property name="position">10</property>
       </packing>
     </child>
     <child>
@@ -255,7 +390,7 @@
       <packing>
         <property name="expand">False</property>
         <property name="fill">True</property>
-        <property name="position">6</property>
+        <property name="position">11</property>
       </packing>
     </child>
     <child>
@@ -290,7 +425,7 @@
       <packing>
         <property name="expand">False</property>
         <property name="fill">True</property>
-        <property name="position">7</property>
+        <property name="position">12</property>
       </packing>
     </child>
   </object>

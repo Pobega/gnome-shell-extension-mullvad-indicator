@@ -30,20 +30,65 @@ const MullvadIndicatorPrefsWidget = class {
         spinButton.set_value(this._settings.get_int('refresh-time'));
         this._settings.bind('refresh-time', spinButton, 'value', Gio.SettingsBindFlags.DEFAULT);
 
-        let gtkSwitch = this._builder.get_object('showIndicatorIconSwitch');
-        this._settings.bind('show-icon', gtkSwitch, 'active', Gio.SettingsBindFlags.DEFAULT);
-        gtkSwitch = this._builder.get_object('showSystemMenuSwitch');
-        this._settings.bind('show-menu', gtkSwitch, 'active', Gio.SettingsBindFlags.DEFAULT);
-        gtkSwitch = this._builder.get_object('showServerSwitch');
-        this._settings.bind('show-server', gtkSwitch, 'active', Gio.SettingsBindFlags.DEFAULT);
-        gtkSwitch = this._builder.get_object('showCountrySwitch');
-        this._settings.bind('show-country', gtkSwitch, 'active', Gio.SettingsBindFlags.DEFAULT);
-        gtkSwitch = this._builder.get_object('showCitySwitch');
-        this._settings.bind('show-city', gtkSwitch, 'active', Gio.SettingsBindFlags.DEFAULT);
-        gtkSwitch = this._builder.get_object('showIPSwitch');
-        this._settings.bind('show-ip', gtkSwitch, 'active', Gio.SettingsBindFlags.DEFAULT);
-        gtkSwitch = this._builder.get_object('showVpnTypeSwitch');
-        this._settings.bind('show-type', gtkSwitch, 'active', Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind(
+            'connect-command-type',
+            this._builder.get_object('connectButtonKindComboBoxText'),
+            'active-id',
+            Gio.SettingsBindFlags.DEFAULT);
+
+        this._settings.bind(
+            'service-name',
+            this._builder.get_object('mullvadSystemdServiceNameTextbox'),
+            'text',
+            Gio.SettingsBindFlags.DEFAULT);
+
+        this._settings.bind(
+            'show-icon',
+            this._builder.get_object('showIndicatorIconSwitch'),
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
+
+        this._settings.bind(
+            'show-menu',
+            this._builder.get_object('showSystemMenuSwitch'),
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
+
+        this._settings.bind(
+            'show-connect-button',
+            this._builder.get_object('showConnectButtonSwitch'),
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
+
+        this._settings.bind(
+            'show-server',
+            this._builder.get_object('showServerSwitch'),
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
+
+        this._settings.bind(
+            'show-country',
+            this._builder.get_object('showCountrySwitch'),
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
+
+        this._settings.bind(
+            'show-city',
+            this._builder.get_object('showCitySwitch'),
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
+
+        this._settings.bind(
+            'show-ip',
+            this._builder.get_object('showIPSwitch'),
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
+
+        this._settings.bind(
+            'show-type',
+            this._builder.get_object('showVpnTypeSwitch'),
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
     }
 
 };

@@ -8,7 +8,7 @@
             <default>true</default>
             <summary>Show Icon</summary>
             <description>
-                    Display indicator icon in system tray
+                Display indicator icon in system tray
             </description>
         </key>
 
@@ -16,7 +16,31 @@
             <default>true</default>
             <summary>Show Menu</summary>
             <description>
-                    Show in system dropdown menu
+                Show in system dropdown menu
+            </description>
+        </key>
+
+        <key type="b" name="show-connect-button">
+            <default>true</default>
+            <summary>Show Connect Button</summary>
+            <description>
+                Display a menu item for connecting/disconnecting
+            </description>
+        </key>
+
+        <key type="s" name="connect-command-type">
+            <default>"mullvad"</default>
+            <summary>Connect Command Type</summary>
+            <description>
+                Type of connect command used for Mullvad (Mullvad app/Systemctl)
+            </description>
+        </key>
+
+        <key type="s" name="service-name">
+            <default>""</default>
+            <summary>Systemd wg-quick service name</summary>
+            <description>
+                Systemd service used for toggling a Mullvad connection
             </description>
         </key>
 
@@ -33,7 +57,7 @@
             <default>true</default>
             <summary>Show Server</summary>
             <description>
-                    Show your currently connected server
+                Show your currently connected server
             </description>
         </key>
 
@@ -41,7 +65,7 @@
             <default>true</default>
             <summary>Show Country</summary>
             <description>
-                    Show your currently connected server's country
+                Show your currently connected server's country
             </description>
         </key>
 
@@ -57,7 +81,7 @@
             <default>true</default>
             <summary>Show IP</summary>
             <description>
-                    Show your current VPN IP address
+                Show your current VPN IP address
             </description>
         </key>
 
@@ -65,7 +89,7 @@
             <default>true</default>
             <summary>Show VPN Type</summary>
             <description>
-                    Show your VPN Protocol (Wireguard, OpenVPN)
+                Show your VPN Protocol (Wireguard, OpenVPN)
             </description>
         </key>
 
