@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: org.gnome.Shell.Extensions.MullvadIndicator\n"
+"Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-10 10:25-0400\n"
+"POT-Creation-Date: 2020-09-26 12:51-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,12 +29,20 @@ msgstr ""
 msgid "Disconnected"
 msgstr ""
 
-#: extension.js:143
+#: extension.js:154
 msgid "Refresh"
 msgstr ""
 
-#: extension.js:150
+#: extension.js:161
 msgid "Settings"
+msgstr ""
+
+#: extension.js:170
+msgid "Disconnect"
+msgstr ""
+
+#: extension.js:171
+msgid "Connect"
 msgstr ""
 
 #: mullvad.js:14
@@ -69,22 +77,50 @@ msgstr ""
 msgid "Automatic refresh time (in seconds)"
 msgstr ""
 
-#: prefs.ui:141
-msgid "Show currently connected server"
+#: prefs.ui:140
+msgid "Connect/Disconnect from Menu"
 msgstr ""
 
 #: prefs.ui:176
+msgid "Mullvad CLI"
+msgstr ""
+
+#: prefs.ui:177
+msgid "Systemd"
+msgstr ""
+
+#: prefs.ui:191
+msgid "Mullvad Application"
+msgstr ""
+
+#: prefs.ui:214
+msgid "Systemd service name "
+msgstr ""
+
+#: prefs.ui:228
+msgid "wg-quick@server"
+msgstr ""
+
+#: prefs.ui:275
+msgid "dddd"
+msgstr ""
+
+#: prefs.ui:276
+msgid "Show currently connected server"
+msgstr ""
+
+#: prefs.ui:311
 msgid "Show currently connected server's country"
 msgstr ""
 
-#: prefs.ui:211
+#: prefs.ui:346
 msgid "Show currently connected server's city"
 msgstr ""
 
-#: prefs.ui:246
+#: prefs.ui:381
 msgid "Show your current IP address"
 msgstr ""
 
-#: prefs.ui:281
+#: prefs.ui:416
 msgid "Show your VPN type (WireGuard/OpenVPN)"
 msgstr ""
