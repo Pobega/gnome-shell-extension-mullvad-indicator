@@ -2,6 +2,14 @@
 <!-- Generated with glade 3.36.0 -->
 <interface>
   <requires lib="gtk+" version="3.22"/>
+  <object class="GtkAdjustment" id="refreshTimeAdjustment">
+    <property name="lower">60</property>
+    <property name="upper">99999</property>
+    <property name="value">300</property>
+    <property name="step_increment">10</property>
+    <property name="page_increment">10</property>
+    <property name="page_size">10</property>
+  </object>
   <object class="GtkBox" id="prefsWidget">
     <property name="name">prefsWidget</property>
     <property name="visible">True</property>
@@ -91,6 +99,9 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="input_purpose">digits</property>
+            <property name="adjustment">refreshTimeAdjustment</property>
+            <property name="numeric">True</property>
+            <property name="update_policy">if-valid</property>
           </object>
           <packing>
             <property name="expand">False</property>
