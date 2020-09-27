@@ -209,7 +209,11 @@ const MullvadIndicator = GObject.registerClass({
             Mainloop.source_remove(this._timeout);
             this._timeout = null;
         }
-        const refreshTime = this._settings.get_int('refresh-time');
+        // We protect this from being set below 60 using a GtkAdjustment, but
+        // just in case the value somehow still goes below that we should
+        // default to 60 here (values less than 1 would cause huge CPU spikes
+        // and make this extension unusable)
+        const refreshTime = Math.max(this._settings.get_int('refresh-time'), 60);
         this._timeout = Mainloop.timeout_add_seconds(refreshTime, function () {
             this._main();
         }.bind(this));
