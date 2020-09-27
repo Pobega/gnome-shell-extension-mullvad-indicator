@@ -7,6 +7,41 @@ const ExtensionUtils = imports.misc.extensionUtils;
 
 let preferences;
 
+const Settings = [
+    {key: 'show-icon',
+        object: 'showIndicatorIconSwitch',
+        property: 'active'},
+    {key: 'show-menu',
+        object: 'showSystemMenuSwitch',
+        property: 'active'},
+    {key: 'refresh-time',
+        object: 'refreshTimeSpinButton',
+        property: 'value'},
+    {key: 'show-connect-button',
+        object: 'showConnectButtonSwitch',
+        property: 'active'},
+    {key: 'connect-command-type',
+        object: 'connectButtonKindComboBoxText',
+        property: 'active-id'},
+    {key: 'service-name',
+        object: 'mullvadSystemdServiceNameTextbox',
+        property: 'text'},
+    {key: 'show-server',
+        object: 'showServerSwitch',
+        property: 'active'},
+    {key: 'show-country',
+        object: 'showCountrySwitch',
+        property: 'active'},
+    {key: 'show-city',
+        object: 'showCitySwitch',
+        property: 'active'},
+    {key: 'show-ip',
+        object: 'showIPSwitch',
+        property: 'active'},
+    {key: 'show-type',
+        object: 'showVpnTypeSwitch',
+        property: 'active'},
+];
 
 const MullvadIndicatorPrefsWidget = class {
     constructor() {
@@ -41,72 +76,14 @@ const MullvadIndicatorPrefsWidget = class {
             }
         );
 
-        // Bind preferences to their Gschema settings
-        let spinButton = this._builder.get_object('refreshTimeSpinButton');
-        spinButton.set_range(1, 9999);
-        spinButton.set_increments(10, 10);
-        spinButton.set_value(this._settings.get_int('refresh-time'));
-        this._settings.bind('refresh-time', spinButton, 'value', Gio.SettingsBindFlags.DEFAULT);
-
-        this._settings.bind(
-            'show-icon',
-            this._builder.get_object('showIndicatorIconSwitch'),
-            'active',
-            Gio.SettingsBindFlags.DEFAULT);
-
-        this._settings.bind(
-            'show-menu',
-            this._builder.get_object('showSystemMenuSwitch'),
-            'active',
-            Gio.SettingsBindFlags.DEFAULT);
-
-        this._settings.bind(
-            'show-connect-button',
-            this._builder.get_object('showConnectButtonSwitch'),
-            'active',
-            Gio.SettingsBindFlags.DEFAULT);
-
-        this._settings.bind(
-            'connect-command-type',
-            this._builder.get_object('connectButtonKindComboBoxText'),
-            'active-id',
-            Gio.SettingsBindFlags.DEFAULT);
-
-        this._settings.bind(
-            'service-name',
-            this._builder.get_object('mullvadSystemdServiceNameTextbox'),
-            'text',
-            Gio.SettingsBindFlags.DEFAULT);
-
-        this._settings.bind(
-            'show-server',
-            this._builder.get_object('showServerSwitch'),
-            'active',
-            Gio.SettingsBindFlags.DEFAULT);
-
-        this._settings.bind(
-            'show-country',
-            this._builder.get_object('showCountrySwitch'),
-            'active',
-            Gio.SettingsBindFlags.DEFAULT);
-
-        this._settings.bind(
-            'show-city',
-            this._builder.get_object('showCitySwitch'),
-            'active',
-            Gio.SettingsBindFlags.DEFAULT);
-
-        this._settings.bind(
-            'show-ip',
-            this._builder.get_object('showIPSwitch'),
-            'active',
-            Gio.SettingsBindFlags.DEFAULT);
-
-        this._settings.bind(
-            'show-type',
-            this._builder.get_object('showVpnTypeSwitch'),
-            'active',
-            Gio.SettingsBindFlags.DEFAULT);
+        // Bind all settings from our settings const
+        for (const setting of Settings) {
+            this._settings.bind(
+                setting.key,
+                this._builder.get_object(setting.object),
+                setting.property,
+                Gio.SettingsBindFlags.DEFAULT);
+        }
     }
 
     // Functions to toggle the visibility of some preferences based on
@@ -129,11 +106,11 @@ const MullvadIndicatorPrefsWidget = class {
     _toggleSystemdServiceNameVisibility() {
         const systemdServiceNameBox = this._builder.get_object('mullvadSystemdServiceName');
         const connectCommandType = this._settings.get_string('connect-command-type');
-        if (connectCommandType == 'systemd') {
+        if (connectCommandType === 'systemd')
             systemdServiceNameBox.show();
-        } else {
+        else
             systemdServiceNameBox.hide();
-        }
+
     }
 
 };
