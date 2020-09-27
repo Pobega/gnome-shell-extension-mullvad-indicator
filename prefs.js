@@ -104,13 +104,13 @@ const MullvadIndicatorPrefsWidget = class {
 
     // Toggles Systemd service name entry field if Systemd is not the currently selected type
     _toggleSystemdServiceNameVisibility() {
-        const systemdServiceNameBox = this._builder.get_object('mullvadSystemdServiceName');
+        const showConnectButton = this._settings.get_boolean('show-connect-button');
         const connectCommandType = this._settings.get_string('connect-command-type');
-        if (connectCommandType === 'systemd')
+        const systemdServiceNameBox = this._builder.get_object('mullvadSystemdServiceName');
+        if (showConnectButton && connectCommandType == 'systemd')
             systemdServiceNameBox.show();
         else
             systemdServiceNameBox.hide();
-
     }
 
 };
