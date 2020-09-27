@@ -53,7 +53,7 @@ const MullvadIndicator = GObject.registerClass({
         this._prefSignals = [];
 
         // A list of prefs we want to immediately update the GUI for when changed
-        let prefs = ['show-icon', 'show-menu', 'show-server', 'show-country', 'show-city', 'show-type', 'show-ip', 'connect-command-type', 'service-name'];
+        let prefs = ['show-icon', 'show-menu', 'show-server', 'show-country', 'show-city', 'show-type', 'show-ip', 'show-connect-button', 'connect-command-type', 'service-name'];
 
         // Connect each signal to the updateGui function
         for (let pref of prefs) {
