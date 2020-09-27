@@ -111,7 +111,7 @@ const MullvadIndicator = GObject.registerClass({
         this._indicator.gicon = Gio.icon_new_for_string(`${Me.path}/icons/${icon}.svg`);
         // Hide or unhide our systray icon
         if (this._settings.get_boolean('show-icon'))
-            this._indicator.visible = true
+            this._indicator.visible = true;
         else
             this._indicator.visible = false;
 
