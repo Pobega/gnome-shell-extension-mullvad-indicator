@@ -4,6 +4,7 @@ const Mainloop = imports.mainloop;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Mullvad = Me.imports.mullvad;
+const Prefs = Me.imports.prefs;
 
 const Main = imports.ui.main;
 const AggregateMenu = Main.panel.statusArea.aggregateMenu;
@@ -49,16 +50,14 @@ const MullvadIndicator = GObject.registerClass({
         this._main();
     }
 
+    // Connect signals for preference changes
     _connectPrefSignals() {
         this._prefSignals = [];
 
-        // A list of prefs we want to immediately update the GUI for when changed
-        let prefs = ['show-icon', 'show-menu', 'show-server', 'show-country', 'show-city', 'show-type', 'show-ip', 'show-connect-button', 'connect-command-type', 'service-name'];
-
-        // Connect each signal to the updateGui function
-        for (let pref of prefs) {
+        // Refresh our menu whenever a setting is modified
+        for (let pref of Prefs.Settings) {
             this._prefSignals.push(this._settings.connect(
-                `changed::${pref}`,
+                `changed::${pref.key}`,
                 _setting => {
                     this._updateGui();
                 }
