@@ -174,7 +174,7 @@
             <property name="can_focus">False</property>
             <items>
               <item id="mullvad" translatable="yes">Mullvad CLI</item>
-              <item id="systemd" translatable="yes">Systemd</item>
+              <item id="systemd" translatable="yes">Systemctl</item>
             </items>
           </object>
           <packing>
@@ -188,7 +188,7 @@
           <object class="GtkLabel" id="connectButtonKindLabel">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="label" translatable="yes">Mullvad Application</property>
+            <property name="label" translatable="yes">VPN Connection method</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -224,8 +224,8 @@
           <object class="GtkEntry" id="mullvadSystemdServiceNameTextbox">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="width_chars">20</property>
-            <property name="placeholder_text" translatable="yes">wg-quick@server</property>
+            <property name="width_chars">22</property>
+            <property name="placeholder_text" translatable="yes">wg-quick@mullvad-profile</property>
           </object>
           <packing>
             <property name="expand">False</property>
