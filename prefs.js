@@ -107,7 +107,7 @@ const MullvadIndicatorPrefsWidget = class {
         const showConnectButton = this._settings.get_boolean('show-connect-button');
         const connectCommandType = this._settings.get_string('connect-command-type');
         const systemdServiceNameBox = this._builder.get_object('mullvadSystemdServiceName');
-        if (showConnectButton && connectCommandType == 'systemd')
+        if (showConnectButton && connectCommandType === 'systemd')
             systemdServiceNameBox.show();
         else
             systemdServiceNameBox.hide();

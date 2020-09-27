@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-26 12:51-0400\n"
+"POT-Creation-Date: 2020-09-27 09:53-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,31 +17,31 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: extension.js:23
+#: extension.js:24
 msgid "Initializing"
 msgstr ""
 
-#: extension.js:24
+#: extension.js:25
 msgid "Connected"
 msgstr ""
 
-#: extension.js:25
+#: extension.js:26
 msgid "Disconnected"
 msgstr ""
 
-#: extension.js:154
+#: extension.js:153
 msgid "Refresh"
 msgstr ""
 
-#: extension.js:161
+#: extension.js:160
 msgid "Settings"
 msgstr ""
 
-#: extension.js:170
+#: extension.js:169
 msgid "Disconnect"
 msgstr ""
 
-#: extension.js:171
+#: extension.js:170
 msgid "Connect"
 msgstr ""
 
@@ -65,62 +65,62 @@ msgstr ""
 msgid "VPN Type"
 msgstr ""
 
-#: prefs.ui:35
+#: prefs.ui:43
 msgid "Display indicator icon"
 msgstr ""
 
-#: prefs.ui:70
+#: prefs.ui:78
 msgid "Show in system menu"
 msgstr ""
 
-#: prefs.ui:106
+#: prefs.ui:117
 msgid "Automatic refresh time (in seconds)"
 msgstr ""
 
-#: prefs.ui:140
+#: prefs.ui:151
 msgid "Connect/Disconnect from Menu"
 msgstr ""
 
-#: prefs.ui:176
+#: prefs.ui:187
 msgid "Mullvad CLI"
 msgstr ""
 
-#: prefs.ui:177
-msgid "Systemd"
+#: prefs.ui:188
+msgid "Systemctl"
 msgstr ""
 
-#: prefs.ui:191
-msgid "Mullvad Application"
+#: prefs.ui:202
+msgid "VPN Connection method"
 msgstr ""
 
-#: prefs.ui:214
+#: prefs.ui:225
 msgid "Systemd service name "
 msgstr ""
 
-#: prefs.ui:228
-msgid "wg-quick@server"
+#: prefs.ui:239
+msgid "wg-quick@mullvad-profile"
 msgstr ""
 
-#: prefs.ui:275
+#: prefs.ui:286
 msgid "dddd"
 msgstr ""
 
-#: prefs.ui:276
+#: prefs.ui:287
 msgid "Show currently connected server"
 msgstr ""
 
-#: prefs.ui:311
+#: prefs.ui:322
 msgid "Show currently connected server's country"
 msgstr ""
 
-#: prefs.ui:346
+#: prefs.ui:357
 msgid "Show currently connected server's city"
 msgstr ""
 
-#: prefs.ui:381
+#: prefs.ui:392
 msgid "Show your current IP address"
 msgstr ""
 
-#: prefs.ui:416
+#: prefs.ui:427
 msgid "Show your VPN type (WireGuard/OpenVPN)"
 msgstr ""

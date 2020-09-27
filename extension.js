@@ -172,7 +172,7 @@ const MullvadIndicator = GObject.registerClass({
         const connectCommandType = this._settings.get_string('connect-command-type');
         const systemdService = this._settings.get_string('service-name');
         let connectCommand;
-        if (connectCommandType == 'mullvad') {
+        if (connectCommandType === 'mullvad') {
             connectCommand = this._mullvad.connected
                 ? 'mullvad disconnect'
                 : 'mullvad connect';
