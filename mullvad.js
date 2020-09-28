@@ -154,7 +154,7 @@ var MullvadVPN = GObject.registerClass({
     // opts not to see removed, used by the _connStatus getter
     _detailedStatusFiltered() {
         const displaySettings = {};
-        for (let item in this._connStatus) {
+        for (const item in this._connStatus) {
             if (this._settings.get_boolean(this._connStatus[item].gSetting))
                 displaySettings[item] = this._connStatus[item];
         }
