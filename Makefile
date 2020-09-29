@@ -13,3 +13,6 @@ zip:
 		metadata.json \
 		schemas locale icons \
 		LICENSE README.md
+
+lint:
+	npx eslint . --ext .js --fix
