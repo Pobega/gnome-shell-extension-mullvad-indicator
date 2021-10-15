@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: org.gnome.Shell.Extensions.MullvadIndicator\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-10 10:25-0400\n"
+"POT-Creation-Date: 2021-10-15 12:42+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,11 +29,11 @@ msgstr ""
 msgid "Disconnected"
 msgstr ""
 
-#: extension.js:143
+#: extension.js:147
 msgid "Refresh"
 msgstr ""
 
-#: extension.js:150
+#: extension.js:154
 msgid "Settings"
 msgstr ""
 
@@ -57,34 +57,34 @@ msgstr ""
 msgid "VPN Type"
 msgstr ""
 
-#: prefs.ui:35
+#: prefs.js:34 prefs.ui:35
 msgid "Display indicator icon"
 msgstr ""
 
-#: prefs.ui:70
+#: prefs.js:35 prefs.ui:70
 msgid "Show in system menu"
 msgstr ""
 
-#: prefs.ui:106
+#: prefs.js:41 prefs.ui:106
 msgid "Automatic refresh time (in seconds)"
 msgstr ""
 
-#: prefs.ui:141
+#: prefs.js:43 prefs.ui:141
 msgid "Show currently connected server"
 msgstr ""
 
-#: prefs.ui:176
+#: prefs.js:44 prefs.ui:176
 msgid "Show currently connected server's country"
 msgstr ""
 
-#: prefs.ui:211
+#: prefs.js:45 prefs.ui:211
 msgid "Show currently connected server's city"
 msgstr ""
 
-#: prefs.ui:246
+#: prefs.js:46 prefs.ui:246
 msgid "Show your current IP address"
 msgstr ""
 
-#: prefs.ui:281
+#: prefs.js:47 prefs.ui:281
 msgid "Show your VPN type (WireGuard/OpenVPN)"
 msgstr ""
