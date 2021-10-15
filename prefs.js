@@ -30,36 +30,36 @@ const MullvadIndicatorPrefsWidget = class {
                 margin_bottom: 24,
                 orientation: Gtk.Orientation.VERTICAL,
             });
-            
-            this._widget.append(this.settingBox(_("Display indicator icon"), 'show-icon', new Gtk.Switch, 'active'));
-            this._widget.append(this.settingBox(_("Show in system menu"), 'show-menu', new Gtk.Switch, 'active'));
-            
-            let spinButton = new Gtk.SpinButton;
+
+            this._widget.append(this.settingBox(_('Display indicator icon'), 'show-icon', new Gtk.Switch(), 'active'));
+            this._widget.append(this.settingBox(_('Show in system menu'), 'show-menu', new Gtk.Switch(), 'active'));
+
+            let spinButton = new Gtk.SpinButton();
             spinButton.set_range(1, 9999);
-            spinButton.set_increments(10,10);
+            spinButton.set_increments(10, 10);
             spinButton.set_value(this._settings.get_int('refresh-time'));
-            this._widget.append(this.settingBox(_("Automatic refresh time (in seconds)"), 'refresh-time', spinButton, 'value'));
-            
-            this._widget.append(this.settingBox(_("Show currently connected server"), 'show-server', new Gtk.Switch, 'active'));
-            this._widget.append(this.settingBox(_("Show currently connected server's country"), 'show-country', new Gtk.Switch, 'active'));
-            this._widget.append(this.settingBox(_("Show currently connected server's city"), 'show-city', new Gtk.Switch, 'active'));
-            this._widget.append(this.settingBox(_("Show your current IP address"), 'show-ip', new Gtk.Switch, 'active'));
-            this._widget.append(this.settingBox(_("Show your VPN type (WireGuard/OpenVPN)"), 'show-type', new Gtk.Switch, 'active'));
+            this._widget.append(this.settingBox(_('Automatic refresh time (in seconds)'), 'refresh-time', spinButton, 'value'));
+
+            this._widget.append(this.settingBox(_('Show currently connected server'), 'show-server', new Gtk.Switch(), 'active'));
+            this._widget.append(this.settingBox(_("Show currently connected server's country"), 'show-country', new Gtk.Switch(), 'active'));
+            this._widget.append(this.settingBox(_("Show currently connected server's city"), 'show-city', new Gtk.Switch(), 'active'));
+            this._widget.append(this.settingBox(_('Show your current IP address'), 'show-ip', new Gtk.Switch(), 'active'));
+            this._widget.append(this.settingBox(_('Show your VPN type (WireGuard/OpenVPN)'), 'show-type', new Gtk.Switch(), 'active'));
 
             return this._widget;
         } else {
             this._builder = new Gtk.Builder();
             this._builder.add_from_file(`${Me.path}/prefs.ui`);
             this._widget = this._builder.get_object('prefsWidget');
-            
+
             this._connectSignals();
-            
+
             return this._widget;
         }
     }
 
     settingBox(labelText, key, object, property) {
-        const box = new Gtk.Box;
+        const box = new Gtk.Box();
         box.append(new Gtk.Label({
             label: labelText,
             halign: Gtk.Align.START,
