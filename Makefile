@@ -11,7 +11,7 @@ zip:
 	zip -r mullvadindicator@pobega.github.com.zip \
 		extension.js mullvad.js prefs.js prefs.ui \
 		metadata.json \
-		schemas locale icons \
+		schemas icons \
 		LICENSE README.md
 
 lint:
