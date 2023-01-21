@@ -1,4 +1,4 @@
-const {GObject, Gio, Soup} = imports.gi;
+const {GLib, GObject, Gio, Soup} = imports.gi;
 const Gettext = imports.gettext;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
@@ -8,7 +8,6 @@ const ExtensionUtils = imports.misc.extensionUtils;
 
 Gettext.bindtextdomain('mullvadindicator', Me.dir.get_child('locale').get_path());
 Gettext.textdomain('mullvadindicator');
-const _ = Gettext.gettext;
 
 const DEFAULT_ITEMS = {
     server: {name: _('Server'), text: '', gSetting: 'show-server'},
@@ -20,13 +19,8 @@ const DEFAULT_ITEMS = {
 
 const _networkMonitor = Gio.NetworkMonitor.get_default();
 
-const _httpSession = new Soup.SessionAsync();
-Soup.Session.prototype.add_feature.call(
-    _httpSession,
-    new Soup.ProxyResolverDefault()
-);
+const _httpSession = new Soup.Session();
 _httpSession.timeout = 2;
-
 
 var MullvadVPN = GObject.registerClass({
     GTypeName: 'MullvadVPN',
@@ -97,35 +91,37 @@ var MullvadVPN = GObject.registerClass({
     // Use Soup.Session to GET am.i.mullvad.net/json
     // The result is used to decide whether or not we're connected to Mullvad
     _fetchConnectionInfo(callback) {
-        const request = new Soup.Message({
-            method: 'GET',
-            uri: Soup.URI.new('https://am.i.mullvad.net/json'),
-        });
+        const message = Soup.Message.new('GET', 'https://am.i.mullvad.net/json');
         // Fake CURL to prevent 403
-        request.request_headers.append('User-Agent', 'curl/7.68.0');
-        request.request_headers.append('Accept', '*/*');
+        message.request_headers.append('User-Agent', 'curl/7.68.0');
+        message.request_headers.append('Accept', '*/*');
 
-        _httpSession.queue_message(request, function (session, message) {
-            if (message.status_code !== 200) {
-                callback(message.status_code, null);
-                return;
+        _httpSession.send_and_read_async(
+            message,
+            GLib.PRIORITY_DEFAULT,
+            null,
+            (session, result) => {
+                if (message.get_status() !== Soup.Status.OK) {
+                    callback(message.get_status(), null);
+                    return;
+                }
+                let bytes = session.send_and_read_finish(result);
+                let decoder = new TextDecoder('utf-8');
+                let response = decoder.decode(bytes.get_data());
+                callback(null, response);
             }
-            const responseJSON = message.response_body.data;
-            const response = JSON.parse(JSON.stringify(responseJSON));
-            callback(null, response);
-        });
+        );
     }
 
     // Compare our currently stored status to what the API reports.
     // If something has changed we should emit 'update' to tell the UI to
     // re-read our status.
     _checkIfStatusChanged(status_code, api_response) {
-        // Unsure why I need to JSON.parse this again but whatever
         api_response = JSON.parse(api_response);
 
         // Don't do anything if our GET failed
         // This happens when switching VPN status, but will eventually resolve
-        if (status_code === Soup.KnownStatusCode.IO_ERROR)
+        if (status_code === Soup.Status.IO_ERROR)
             return;
 
         // if api_response is null we want to assume we're disconnected
@@ -160,5 +156,4 @@ var MullvadVPN = GObject.registerClass({
         }
         return displaySettings;
     }
-
 });

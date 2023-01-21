@@ -10,7 +10,6 @@ const shellVersion = parseFloat(Config.PACKAGE_VERSION);
 
 Gettext.bindtextdomain('mullvadindicator', Me.dir.get_child('locale').get_path());
 Gettext.textdomain('mullvadindicator');
-const _ = Gettext.gettext;
 
 let preferences;
 
