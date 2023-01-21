@@ -3,12 +3,8 @@
   "description": "Mullvad connection status indicator",
   "uuid": "mullvadindicator@pobega.github.com",
   "shell-version": [
-    "3.36",
-    "3.38",
-    "40",
-    "41",
-    "42"
+    "43"
   ],
   "url": "https://github.com/Pobega/gnome-shell-extension-mullvad-indicator",
-  "version": 4.0
+  "version": 5.0
 }
