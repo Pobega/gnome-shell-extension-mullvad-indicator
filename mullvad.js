@@ -8,6 +8,7 @@ const ExtensionUtils = imports.misc.extensionUtils;
 
 Gettext.bindtextdomain('mullvadindicator', Me.dir.get_child('locale').get_path());
 Gettext.textdomain('mullvadindicator');
+const _ = Gettext.gettext;
 
 const DEFAULT_ITEMS = {
     server: {name: _('Server'), text: '', gSetting: 'show-server'},
