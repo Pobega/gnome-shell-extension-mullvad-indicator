@@ -180,10 +180,15 @@ const MullvadIndicator = GObject.registerClass({
             GLib.Source.remove(this._timeout);
             this._timeout = null;
         }
+
         let refreshTime = this._settings.get_int('refresh-time');
-        this._timeout = GLib.Source.timeout_add_seconds(refreshTime, function () {
-            this._main();
-        }.bind(this));
+        this._timeout = GLib.timeout_add_seconds(
+            GLib.PRIORITY_DEFAULT,
+            refreshTime,
+            function () {
+                this._main();
+            }.bind(this)
+        );
     }
 
     _stop() {
