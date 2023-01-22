@@ -17,8 +17,8 @@ Pull requests are always welcome, but please try to stick to Gnome's [GJS Style 
 In addition you're of course welcome to fork this repo if you'd like, but please be kind and send back any changes that may be relevant here :)
 
 ## Screenshots
-![Screenshot](https://raw.githubusercontent.com/Pobega/gnome-shell-extension-mullvad-indicator/master/screenshot.png)
-![Settings](https://raw.githubusercontent.com/Pobega/gnome-shell-extension-mullvad-indicator/master/settings.png)
+![Screenshot](screenshots/screenshot.png)
+![Settings](screenshots/settings.png)
 
 ## Special thanks
  * The authors of http://gjs.guide/
