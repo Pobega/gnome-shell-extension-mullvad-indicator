@@ -196,7 +196,7 @@ const MullvadIndicator = GObject.registerClass({
         // Kill our mainloop when we shut down
         if (this._timeout)
             GLib.Source.remove(this._timeout);
-	this._timeout.destroy();
+	this._timeout = null;
     }
 });
 
