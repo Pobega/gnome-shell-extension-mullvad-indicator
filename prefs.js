@@ -67,9 +67,8 @@ const MullvadIndicatorPrefsWidget = class {
 };
 
 function init() {
-    preferences = new MullvadIndicatorPrefsWidget();
 }
 
 function buildPrefsWidget() {
-    return preferences.buildWidget();
+    return new MullvadIndicatorPrefsWidget();
 }
