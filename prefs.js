@@ -1,5 +1,6 @@
 const {Adw, Gio, GObject, Gtk} = imports.gi;
-const Gettext = imports.gettext;
+const Gettext = imports.gettext.domain('mullvadindicator');
+const _ = Gettext.gettext;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
@@ -8,23 +9,19 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const Config = imports.misc.config;
 const shellVersion = parseFloat(Config.PACKAGE_VERSION);
 
-Gettext.bindtextdomain('mullvadindicator', Me.dir.get_child('locale').get_path());
-Gettext.textdomain('mullvadindicator');
-const _ = Gettext.gettext;
-
 let preferences;
 
 
 const MullvadIndicatorPrefsWidget = class {
     constructor() {
-        this._settings = ExtensionUtils.getSettings('org.gnome.Shell.Extensions.MullvadIndicator');
+        this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.MullvadIndicator');
     }
 
     buildWidget() {
         this._widget = new Adw.PreferencesPage();
 
         let group = new Adw.PreferencesGroup({
-            title: _('Visibility')
+            title: _('Visibility'),
         });
         this._widget.add(group);
 
@@ -32,7 +29,7 @@ const MullvadIndicatorPrefsWidget = class {
         group.add(this._prefRow(_('Show in system menu'), 'show-menu', new Gtk.Switch(), 'active'));
 
         group = new Adw.PreferencesGroup({
-            title: _('Refresh')
+            title: _('Refresh'),
         });
         this._widget.add(group);
 
@@ -43,7 +40,7 @@ const MullvadIndicatorPrefsWidget = class {
         group.add(this._prefRow(_('Automatic refresh time (in seconds)'), 'refresh-time', spinButton, 'value'));
 
         group = new Adw.PreferencesGroup({
-            title: _('Status')
+            title: _('Status'),
         });
         this._widget.add(group);
 
@@ -57,7 +54,7 @@ const MullvadIndicatorPrefsWidget = class {
     }
 
     _prefRow(title, key, object, property) {
-        const row = new Adw.ActionRow({ title: title })
+        const row = new Adw.ActionRow({title: title});
 
         object.valign = Gtk.Align.CENTER;
         row.add_suffix(object);

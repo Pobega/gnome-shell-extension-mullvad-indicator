@@ -1,5 +1,6 @@
 const {GLib, GObject, Gio} = imports.gi;
-const Gettext = imports.gettext;
+const Gettext = imports.gettext.domain('mullvadindicator');
+const _ = Gettext.gettext;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Mullvad = Me.imports.mullvad;
@@ -10,12 +11,6 @@ const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 const QuickSettings = imports.ui.quickSettings;
 const QuickSettingsMenu = imports.ui.main.panel.statusArea.quickSettings;
-const Util = imports.misc.util;
-
-
-Gettext.bindtextdomain('mullvadindicator', Me.dir.get_child('locale').get_path());
-Gettext.textdomain('mullvadindicator');
-const _ = Gettext.gettext;
 
 const ICON_CONNECTED = 'mullvad-connected-symbolic';
 const ICON_DISCONNECTED = 'mullvad-disconnected-symbolic';
@@ -59,7 +54,7 @@ const MullvadToggle = GObject.registerClass({
         // Item for opening extension settings
         let settingsItem = new PopupMenu.PopupMenuItem(_('Settings'));
         settingsItem.actor.connect('button-press-event', () => {
-            Util.spawnCommandLine('gnome-extensions prefs mullvadindicator@pobega.github.com');
+		ExtensionUtils.openPrefs();
         });
         this._bottomSection.addMenuItem(settingsItem);
     }
@@ -107,7 +102,10 @@ const MullvadIndicator = GObject.registerClass({
         super._init();
 
         // Get our settings
-        this._settings = ExtensionUtils.getSettings('org.gnome.Shell.Extensions.MullvadIndicator');
+        this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.MullvadIndicator');
+
+	// Get translations
+	ExtensionUtils.initTranslations('mullvadindicator');
 
         // Instantiate our Mullvad object
         this._mullvad = new Mullvad.MullvadVPN();
@@ -198,7 +196,7 @@ const MullvadIndicator = GObject.registerClass({
         // Kill our mainloop when we shut down
         if (this._timeout)
             GLib.Source.remove(this._timeout);
-        this._timeout = undefined;
+	this._timeout.destroy();
     }
 });
 

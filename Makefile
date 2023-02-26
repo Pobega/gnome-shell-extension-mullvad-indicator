@@ -1,8 +1,8 @@
-all: genschema zip
+all: genlocale genschema zip
 
 # Generate a root application locale for translations
 genlocale:
-	xgettext --output=locale/org.gnome.Shell.Extensions.MullvadIndicator.pot *.{js,ui}
+	xgettext --output=locale/org.gnome.shell.extensions.MullvadIndicator.pot *.js
 
 # Generate a compiled schema
 genschema:

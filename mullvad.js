@@ -1,14 +1,8 @@
 const {GLib, GObject, Gio, Soup} = imports.gi;
-const Gettext = imports.gettext;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 const ExtensionUtils = imports.misc.extensionUtils;
-
-
-Gettext.bindtextdomain('mullvadindicator', Me.dir.get_child('locale').get_path());
-Gettext.textdomain('mullvadindicator');
-const _ = Gettext.gettext;
 
 const DEFAULT_ITEMS = {
     server: {name: _('Server'), text: '', gSetting: 'show-server'},
@@ -18,10 +12,7 @@ const DEFAULT_ITEMS = {
     type: {name: _('VPN Type'), text: '', gSetting: 'show-type'},
 };
 
-const _networkMonitor = Gio.NetworkMonitor.get_default();
 
-const _httpSession = new Soup.Session();
-_httpSession.timeout = 2;
 
 var MullvadVPN = GObject.registerClass({
     GTypeName: 'MullvadVPN',
@@ -42,7 +33,11 @@ var MullvadVPN = GObject.registerClass({
     _init(params = {}) {
         super._init(params);
 
-        this._settings = ExtensionUtils.getSettings('org.gnome.Shell.Extensions.MullvadIndicator');
+        this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.MullvadIndicator');
+
+        this._networkMonitor = Gio.NetworkMonitor.get_default();
+        this._httpSession = new Soup.Session();
+        this._httpSession.timeout = 2;
 
         this._initConnStatus();
         this._connectNetworkSignals();
@@ -71,7 +66,7 @@ var MullvadVPN = GObject.registerClass({
 
     // force an update check when a GNetworkMonitor emits network-changed
     _connectNetworkSignals() {
-        _networkMonitor.connect('network-changed', () => {
+        this._networkMonitor.connect('network-changed', () => {
             this._pollMullvad();
         });
     }
@@ -97,7 +92,7 @@ var MullvadVPN = GObject.registerClass({
         message.request_headers.append('User-Agent', 'curl/7.68.0');
         message.request_headers.append('Accept', '*/*');
 
-        _httpSession.send_and_read_async(
+        this._httpSession.send_and_read_async(
             message,
             GLib.PRIORITY_DEFAULT,
             null,
