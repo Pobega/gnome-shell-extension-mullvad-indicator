@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-26 17:20-0500\n"
+"POT-Creation-Date: 2023-02-26 19:07-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,23 +17,23 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: extension.js:19
+#: extension.js:18
 msgid "Initializing"
 msgstr ""
 
-#: extension.js:20
+#: extension.js:19
 msgid "Connected"
 msgstr ""
 
-#: extension.js:21
+#: extension.js:20
 msgid "Disconnected"
 msgstr ""
 
-#: extension.js:49 prefs.js:32
+#: extension.js:48 prefs.js:33
 msgid "Refresh"
 msgstr ""
 
-#: extension.js:56
+#: extension.js:55
 msgid "Settings"
 msgstr ""
 
@@ -57,42 +57,42 @@ msgstr ""
 msgid "VPN Type"
 msgstr ""
 
-#: prefs.js:24
+#: prefs.js:25
 msgid "Visibility"
 msgstr ""
 
-#: prefs.js:28
+#: prefs.js:29
 msgid "Display indicator icon"
 msgstr ""
 
-#: prefs.js:29
+#: prefs.js:30
 msgid "Show in system menu"
 msgstr ""
 
-#: prefs.js:40
+#: prefs.js:41
 msgid "Automatic refresh time (in seconds)"
 msgstr ""
 
-#: prefs.js:43
+#: prefs.js:44
 msgid "Status"
 msgstr ""
 
-#: prefs.js:47
+#: prefs.js:48
 msgid "Show currently connected server"
 msgstr ""
 
-#: prefs.js:48
+#: prefs.js:49
 msgid "Show currently connected server's country"
 msgstr ""
 
-#: prefs.js:49
+#: prefs.js:50
 msgid "Show currently connected server's city"
 msgstr ""
 
-#: prefs.js:50
+#: prefs.js:51
 msgid "Show your current IP address"
 msgstr ""
 
-#: prefs.js:51
+#: prefs.js:52
 msgid "Show your VPN type (WireGuard/OpenVPN)"
 msgstr ""
