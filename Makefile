@@ -18,3 +18,7 @@ zip:
 
 lint:
 	npx eslint . --ext .js --fix
+
+install:
+	mkdir -p ~/.local/share/gnome-shell/extensions/mullvadindicator\@pobega.github.com/
+	unzip mullvadindicator@pobega.github.com.zip -d ~/.local/share/gnome-shell/extensions/mullvadindicator\@pobega.github.com/
