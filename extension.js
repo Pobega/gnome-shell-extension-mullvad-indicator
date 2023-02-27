@@ -54,7 +54,7 @@ const MullvadToggle = GObject.registerClass({
         // Item for opening extension settings
         let settingsItem = new PopupMenu.PopupMenuItem(_('Settings'));
         settingsItem.actor.connect('button-press-event', () => {
-		ExtensionUtils.openPrefs();
+            ExtensionUtils.openPrefs();
         });
         this._bottomSection.addMenuItem(settingsItem);
     }
@@ -104,8 +104,8 @@ const MullvadIndicator = GObject.registerClass({
         // Get our settings
         this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.MullvadIndicator');
 
-	// Get translations
-	ExtensionUtils.initTranslations('mullvadindicator');
+        // Get translations
+        ExtensionUtils.initTranslations('mullvadindicator');
 
         // Instantiate our Mullvad object
         this._mullvad = new Mullvad.MullvadVPN();
@@ -151,12 +151,6 @@ const MullvadIndicator = GObject.registerClass({
                 this._sync();
             }
         ));
-
-        this._signals.push(this.connect(
-            'destroy', () => {
-                this._stop();
-            }
-        ));
     }
 
     _disconnectSignals() {
@@ -196,7 +190,12 @@ const MullvadIndicator = GObject.registerClass({
         // Kill our mainloop when we shut down
         if (this._timeout)
             GLib.Source.remove(this._timeout);
-	this._timeout = null;
+        this._timeout = null;
+    }
+
+    destroy() {
+        this._stop();
+        super.destroy();
     }
 });
 
@@ -211,5 +210,4 @@ function enable() {
 
 function disable() {
     _mullvadIndicator.destroy();
-    _mullvadIndicator = null;
 }

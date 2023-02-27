@@ -38,8 +38,8 @@ var MullvadVPN = GObject.registerClass({
         this._networkMonitor = Gio.NetworkMonitor.get_default();
         this._httpSession = new Soup.Session();
         this._httpSession.timeout = 2;
-	// Soup.Status.IO_ERROR seems to no longer exist?
-	this._IO_ERROR = 7;
+        // Soup.Status.IO_ERROR seems to no longer exist?
+        this._IO_ERROR = 7;
 
         this._initConnStatus();
         this._connectNetworkSignals();
