@@ -210,4 +210,5 @@ function enable() {
 
 function disable() {
     _mullvadIndicator.destroy();
+    _mullvadIndicator = null;
 }
