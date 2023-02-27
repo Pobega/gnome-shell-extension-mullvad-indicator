@@ -11,19 +11,20 @@ const shellVersion = parseFloat(Config.PACKAGE_VERSION);
 
 let preferences;
 
-
-const MullvadIndicatorPrefsWidget = class {
-    constructor() {
-        this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.MullvadIndicator');
+class MullvadIndicatorPrefsWidget extends Adw.PreferencesPage {
+    static {
+        GObject.registerClass(this);
     }
 
-    buildWidget() {
-        this._widget = new Adw.PreferencesPage();
+    constructor() {
+        super();
+
+        this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.MullvadIndicator');
 
         let group = new Adw.PreferencesGroup({
             title: _('Visibility'),
         });
-        this._widget.add(group);
+        this.add(group);
 
         group.add(this._prefRow(_('Display indicator icon'), 'show-icon', new Gtk.Switch(), 'active'));
         group.add(this._prefRow(_('Show in system menu'), 'show-menu', new Gtk.Switch(), 'active'));
@@ -31,7 +32,7 @@ const MullvadIndicatorPrefsWidget = class {
         group = new Adw.PreferencesGroup({
             title: _('Refresh'),
         });
-        this._widget.add(group);
+        this.add(group);
 
         let spinButton = new Gtk.SpinButton();
         spinButton.set_range(1, 9999);
@@ -42,15 +43,13 @@ const MullvadIndicatorPrefsWidget = class {
         group = new Adw.PreferencesGroup({
             title: _('Status'),
         });
-        this._widget.add(group);
+        this.add(group);
 
         group.add(this._prefRow(_('Show currently connected server'), 'show-server', new Gtk.Switch(), 'active'));
         group.add(this._prefRow(_("Show currently connected server's country"), 'show-country', new Gtk.Switch(), 'active'));
         group.add(this._prefRow(_("Show currently connected server's city"), 'show-city', new Gtk.Switch(), 'active'));
         group.add(this._prefRow(_('Show your current IP address'), 'show-ip', new Gtk.Switch(), 'active'));
         group.add(this._prefRow(_('Show your VPN type (WireGuard/OpenVPN)'), 'show-type', new Gtk.Switch(), 'active'));
-
-        return this._widget;
     }
 
     _prefRow(title, key, object, property) {
