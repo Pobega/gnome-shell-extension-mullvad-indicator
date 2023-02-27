@@ -20,6 +20,14 @@
             </description>
         </key>
 
+        <key type="b" name="show-server-text">
+            <default>true</default>
+            <summary>Show Server Text</summary>
+            <description>
+                    Show your server's city and country instead of 'Connected' (e.g. 'Tokyo, Japan')
+            </description>
+        </key>
+
         <key type="i" name="refresh-time">
             <default>600</default>
             <summary>Refresh time</summary>

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-26 19:07-0500\n"
+"POT-Creation-Date: 2023-02-27 10:27-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,11 +29,11 @@ msgstr ""
 msgid "Disconnected"
 msgstr ""
 
-#: extension.js:48 prefs.js:33
+#: extension.js:51 prefs.js:34
 msgid "Refresh"
 msgstr ""
 
-#: extension.js:55
+#: extension.js:58
 msgid "Settings"
 msgstr ""
 
@@ -69,30 +69,34 @@ msgstr ""
 msgid "Show in system menu"
 msgstr ""
 
-#: prefs.js:41
+#: prefs.js:31
+msgid "Use server location as system menu text"
+msgstr ""
+
+#: prefs.js:42
 msgid "Automatic refresh time (in seconds)"
 msgstr ""
 
-#: prefs.js:44
+#: prefs.js:45
 msgid "Status"
 msgstr ""
 
-#: prefs.js:48
+#: prefs.js:49
 msgid "Show currently connected server"
 msgstr ""
 
-#: prefs.js:49
+#: prefs.js:50
 msgid "Show currently connected server's country"
 msgstr ""
 
-#: prefs.js:50
+#: prefs.js:51
 msgid "Show currently connected server's city"
 msgstr ""
 
-#: prefs.js:51
+#: prefs.js:52
 msgid "Show your current IP address"
 msgstr ""
 
-#: prefs.js:52
+#: prefs.js:53
 msgid "Show your VPN type (WireGuard/OpenVPN)"
 msgstr ""

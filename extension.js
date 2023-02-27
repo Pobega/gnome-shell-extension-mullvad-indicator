@@ -28,6 +28,9 @@ const MullvadToggle = GObject.registerClass({
             gicon: Gio.icon_new_for_string(`${Me.path}/icons/${STATUS_DISCONNECTED}.svg`),
         });
 
+        // Get our settings
+        this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.MullvadIndicator');
+
         // Menu section with configurable connection status information
         this._detailedStatusSection = new PopupMenu.PopupMenuSection();
         this.menu.addMenuItem(this._detailedStatusSection);
@@ -63,6 +66,8 @@ const MullvadToggle = GObject.registerClass({
         if (mullvad.connected) {
             this.gicon = Gio.icon_new_for_string(`${Me.path}/icons/${ICON_CONNECTED}.svg`);
             this.label = STATUS_CONNECTED;
+            if (this._settings.get_boolean('show-server-text'))
+                this.label = `${mullvad.cityName}, ${mullvad.countryName}`;
             this.checked = true;
         } else {
             this.gicon = Gio.icon_new_for_string(`${Me.path}/icons/${ICON_DISCONNECTED}.svg`);
@@ -136,7 +141,7 @@ const MullvadIndicator = GObject.registerClass({
         this._signals = [];
 
         // A list of prefs we want to immediately update the GUI for when changed
-        let prefs = ['show-icon', 'show-menu', 'show-server', 'show-country', 'show-city', 'show-type', 'show-ip'];
+        let prefs = ['show-icon', 'show-menu', 'show-server', 'show-country', 'show-city', 'show-type', 'show-ip', 'show-server-text'];
 
         for (let pref of prefs) {
             this._signals.push(this._settings.connect(

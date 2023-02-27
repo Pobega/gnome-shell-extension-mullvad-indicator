@@ -52,6 +52,18 @@ var MullvadVPN = GObject.registerClass({
         return this._connected;
     }
 
+    get cityName() {
+        if (typeof this._connStatus.city.text === 'undefined')
+            return false;
+        return this._connStatus.city.text;
+    }
+
+    get countryName() {
+        if (typeof this._connStatus.country.text === 'undefined')
+            return false;
+        return this._connStatus.country.text;
+    }
+
     // An object describing the current connection details; see DEFAULT_DATA
     get detailed_status() {
         if (typeof this._connStatus === 'undefined')

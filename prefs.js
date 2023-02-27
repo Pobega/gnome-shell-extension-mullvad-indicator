@@ -28,6 +28,7 @@ class MullvadIndicatorPrefsWidget extends Adw.PreferencesPage {
 
         group.add(this._prefRow(_('Display indicator icon'), 'show-icon', new Gtk.Switch(), 'active'));
         group.add(this._prefRow(_('Show in system menu'), 'show-menu', new Gtk.Switch(), 'active'));
+        group.add(this._prefRow(_('Use server location as system menu text'), 'show-server-text', new Gtk.Switch(), 'active'));
 
         group = new Adw.PreferencesGroup({
             title: _('Refresh'),
