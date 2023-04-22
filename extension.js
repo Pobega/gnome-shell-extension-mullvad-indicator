@@ -24,7 +24,7 @@ const MullvadToggle = GObject.registerClass({
 }, class MullvadToggle extends QuickSettings.QuickMenuToggle {
     _init(mullvad) {
         super._init({
-            label: STATUS_STARTING,
+            title: STATUS_STARTING,
             gicon: Gio.icon_new_for_string(`${Me.path}/icons/${STATUS_DISCONNECTED}.svg`),
         });
 
@@ -65,17 +65,17 @@ const MullvadToggle = GObject.registerClass({
     _sync(mullvad) {
         if (mullvad.connected) {
             this.gicon = Gio.icon_new_for_string(`${Me.path}/icons/${ICON_CONNECTED}.svg`);
-            this.label = STATUS_CONNECTED;
+            this.title = STATUS_CONNECTED;
             if (this._settings.get_boolean('show-server-text'))
-                this.label = `${mullvad.cityName}, ${mullvad.countryName}`;
+                this.title = `${mullvad.cityName}, ${mullvad.countryName}`;
             this.checked = true;
         } else {
             this.gicon = Gio.icon_new_for_string(`${Me.path}/icons/${ICON_DISCONNECTED}.svg`);
-            this.label = STATUS_DISCONNECTED;
+            this.title = STATUS_DISCONNECTED;
             this.checked = false;
         }
 
-        this.menu.setHeader(this.gicon, this.label);
+        this.menu.setHeader(this.gicon, this.title);
         this._syncDetailedStatus(mullvad.connected, mullvad.detailed_status);
     }
 
