@@ -66,8 +66,11 @@ const MullvadToggle = GObject.registerClass({
         if (mullvad.connected) {
             this.gicon = Gio.icon_new_for_string(`${Me.path}/icons/${ICON_CONNECTED}.svg`);
             this.title = STATUS_CONNECTED;
-            if (this._settings.get_boolean('show-server-text'))
-                this.title = `${mullvad.cityName}, ${mullvad.countryName}`;
+            this.subtitle = null;
+            if (this._settings.get_boolean('show-server-text')) {
+                this.title = `${mullvad.countryName}`;
+                this.subtitle = `${mullvad.cityName}`;
+            }
             this.checked = true;
         } else {
             this.gicon = Gio.icon_new_for_string(`${Me.path}/icons/${ICON_DISCONNECTED}.svg`);
