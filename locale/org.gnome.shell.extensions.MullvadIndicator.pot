@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-22 00:20-0400\n"
+"POT-Creation-Date: 2023-05-18 18:23+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "Initializing"
 msgstr ""
 
-#: extension.js:19
+#: extension.js:19 prefs.js:29
 msgid "Connected"
 msgstr ""
 
@@ -29,7 +29,7 @@ msgstr ""
 msgid "Disconnected"
 msgstr ""
 
-#: extension.js:51 prefs.js:34
+#: extension.js:51 prefs.js:33
 msgid "Refresh"
 msgstr ""
 
@@ -37,66 +37,74 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: mullvad.js:8
+#: mullvad.js:10
 msgid "Server"
 msgstr ""
 
-#: mullvad.js:9
+#: mullvad.js:11
 msgid "Country"
 msgstr ""
 
-#: mullvad.js:10
+#: mullvad.js:12
 msgid "City"
 msgstr ""
 
-#: mullvad.js:11
+#: mullvad.js:13
 msgid "IP Address"
 msgstr ""
 
-#: mullvad.js:12
+#: mullvad.js:14
 msgid "VPN Type"
 msgstr ""
 
-#: prefs.js:25
+#: prefs.js:23
 msgid "Visibility"
 msgstr ""
 
-#: prefs.js:29
+#: prefs.js:27
 msgid "Display indicator icon"
 msgstr ""
 
-#: prefs.js:30
+#: prefs.js:28
 msgid "Show in system menu"
 msgstr ""
 
-#: prefs.js:31
-msgid "Use server location as system menu text"
+#: prefs.js:29
+msgid "Title text"
 msgstr ""
 
-#: prefs.js:42
+#: prefs.js:30
+msgid "Subtitle text"
+msgstr ""
+
+#: prefs.js:30
+msgid "None"
+msgstr ""
+
+#: prefs.js:41
 msgid "Automatic refresh time (in seconds)"
 msgstr ""
 
-#: prefs.js:45
+#: prefs.js:44
 msgid "Status"
 msgstr ""
 
-#: prefs.js:49
+#: prefs.js:48
 msgid "Show currently connected server"
 msgstr ""
 
-#: prefs.js:50
+#: prefs.js:49
 msgid "Show currently connected server's country"
 msgstr ""
 
-#: prefs.js:51
+#: prefs.js:50
 msgid "Show currently connected server's city"
 msgstr ""
 
-#: prefs.js:52
+#: prefs.js:51
 msgid "Show your current IP address"
 msgstr ""
 
-#: prefs.js:53
+#: prefs.js:52
 msgid "Show your VPN type (WireGuard/OpenVPN)"
 msgstr ""
