@@ -65,12 +65,10 @@ const MullvadToggle = GObject.registerClass({
     _sync(mullvad) {
         if (mullvad.connected) {
             this.gicon = Gio.icon_new_for_string(`${Me.path}/icons/${ICON_CONNECTED}.svg`);
-            this.title = STATUS_CONNECTED;
-            this.subtitle = null;
-            if (this._settings.get_boolean('show-server-text')) {
-                this.title = `${mullvad.countryName}`;
-                this.subtitle = `${mullvad.cityName}`;
-            }
+
+            this.title = mullvad.statusItem(this._settings.get_uint('title-text')) ?? STATUS_CONNECTED;
+            this.subtitle = mullvad.statusItem(this._settings.get_uint('subtitle-text'));
+
             this.checked = true;
         } else {
             this.gicon = Gio.icon_new_for_string(`${Me.path}/icons/${ICON_DISCONNECTED}.svg`);
@@ -144,7 +142,10 @@ const MullvadIndicator = GObject.registerClass({
         this._signals = [];
 
         // A list of prefs we want to immediately update the GUI for when changed
-        let prefs = ['show-icon', 'show-menu', 'show-server', 'show-country', 'show-city', 'show-type', 'show-ip', 'show-server-text'];
+        let prefs = [
+            'show-icon', 'show-menu', 'show-server', 'show-country', 'show-city',
+            'show-type', 'show-ip', 'title-text', 'subtitle-text'
+        ];
 
         for (let pref of prefs) {
             this._signals.push(this._settings.connect(

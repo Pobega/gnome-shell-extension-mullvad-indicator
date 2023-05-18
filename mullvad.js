@@ -1,4 +1,6 @@
 const {GLib, GObject, Gio, Soup} = imports.gi;
+const Gettext = imports.gettext.domain('mullvadindicator');
+const _ = Gettext.gettext;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
@@ -11,6 +13,14 @@ const DEFAULT_ITEMS = {
     ip: {name: _('IP Address'), text: '', gSetting: 'show-ip'},
     type: {name: _('VPN Type'), text: '', gSetting: 'show-type'},
 };
+
+const ITEMS_ENUMERATED = [
+    'server', 'country', 'city', 'ip', 'type',
+];
+
+function statusItemNames() {
+    return ITEMS_ENUMERATED.map((item_enum) => DEFAULT_ITEMS[item_enum].name);
+}
 
 
 
@@ -52,16 +62,16 @@ var MullvadVPN = GObject.registerClass({
         return this._connected;
     }
 
-    get cityName() {
-        if (typeof this._connStatus.city.text === 'undefined')
-            return false;
-        return this._connStatus.city.text;
-    }
+    statusItem(index) {
+        const item_enum = ITEMS_ENUMERATED[index];
+        if (typeof item_enum === 'undefined')
+            return null;
 
-    get countryName() {
-        if (typeof this._connStatus.country.text === 'undefined')
-            return false;
-        return this._connStatus.country.text;
+        const item = this._connStatus[item_enum].text;
+        if (typeof item === 'undefined')
+            return null;
+
+        return item;
     }
 
     // An object describing the current connection details; see DEFAULT_DATA

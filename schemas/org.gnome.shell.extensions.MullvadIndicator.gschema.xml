@@ -20,11 +20,19 @@
             </description>
         </key>
 
-        <key type="b" name="show-server-text">
-            <default>true</default>
-            <summary>Show Server Text</summary>
+        <key type="u" name="title-text">
+            <default>5</default>
+            <summary>Title Text</summary>
             <description>
-                    Show your server's city and country instead of 'Connected' (e.g. 'Tokyo, Japan')
+                    Status information to show as quick settings title text
+            </description>
+        </key>
+
+        <key type="u" name="subtitle-text">
+            <default>1</default>
+            <summary>Subtitle Text</summary>
+            <description>
+                    Status information to show as quick settings subtitle text
             </description>
         </key>
 
