@@ -73,6 +73,7 @@ const MullvadToggle = GObject.registerClass({
         } else {
             this.gicon = Gio.icon_new_for_string(`${Me.path}/icons/${ICON_DISCONNECTED}.svg`);
             this.title = STATUS_DISCONNECTED;
+            this.subtitle = null;
             this.checked = false;
         }
 
