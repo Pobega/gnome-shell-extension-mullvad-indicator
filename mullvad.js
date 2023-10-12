@@ -1,10 +1,11 @@
-const {GLib, GObject, Gio, Soup} = imports.gi;
-const Gettext = imports.gettext.domain('mullvadindicator');
+import GLib from 'gi://GLib';
+import GObject from 'gi://GObject';
+import Gio from 'gi://Gio';
+import Soup from 'gi://Soup';
+
+import {domain as gettextDomain} from 'gettext';
+const Gettext = gettextDomain('mullvadindicator@pobega.github.com');
 const _ = Gettext.gettext;
-
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-
-const ExtensionUtils = imports.misc.extensionUtils;
 
 const DEFAULT_ITEMS = {
     server: {name: _('Server'), text: '', gSetting: 'show-server'},
@@ -18,13 +19,11 @@ const ITEMS_ENUMERATED = [
     'server', 'country', 'city', 'ip', 'type',
 ];
 
-function statusItemNames() {
+export function statusItemNames() {
     return ITEMS_ENUMERATED.map((item_enum) => DEFAULT_ITEMS[item_enum].name);
 }
 
-
-
-var MullvadVPN = GObject.registerClass({
+export const MullvadVPN = GObject.registerClass({
     GTypeName: 'MullvadVPN',
     Properties: {
         'connected': GObject.ParamSpec.string('connected',
@@ -40,10 +39,10 @@ var MullvadVPN = GObject.registerClass({
         'status-changed': {},
     },
 }, class MullvadVPN extends GObject.Object {
-    _init(params = {}) {
+    _init(settings, params = {}) {
         super._init(params);
 
-        this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.MullvadIndicator');
+        this._settings = settings;
 
         this._networkMonitor = Gio.NetworkMonitor.get_default();
         this._httpSession = new Soup.Session();

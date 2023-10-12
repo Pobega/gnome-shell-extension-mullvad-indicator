@@ -1,35 +1,29 @@
-const {GLib, GObject, Gio} = imports.gi;
-const Gettext = imports.gettext.domain('mullvadindicator');
-const _ = Gettext.gettext;
+import GLib from 'gi://GLib';
+import GObject from 'gi://GObject';
+import Gio from 'gi://Gio';
 
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Mullvad = Me.imports.mullvad;
+import * as Mullvad from './mullvad.js';
 
-const Main = imports.ui.main;
-const ExtensionUtils = imports.misc.extensionUtils;
-const PanelMenu = imports.ui.panelMenu;
-const PopupMenu = imports.ui.popupMenu;
-const QuickSettings = imports.ui.quickSettings;
-const QuickSettingsMenu = imports.ui.main.panel.statusArea.quickSettings;
+import {Extension, gettext as _} from 'resource:///org/gnome/shell/extensions/extension.js';
+import * as Main from 'resource:///org/gnome/shell/ui/main.js';
+import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
+import * as QuickSettings from 'resource:///org/gnome/shell/ui/quickSettings.js';
+const QuickSettingsMenu = Main.panel.statusArea.quickSettings;
 
 const ICON_CONNECTED = 'mullvad-connected-symbolic';
 const ICON_DISCONNECTED = 'mullvad-disconnected-symbolic';
 
-const STATUS_STARTING = _('Initializing');
-const STATUS_CONNECTED = _('Connected');
-const STATUS_DISCONNECTED = _('Disconnected');
-
 const MullvadToggle = GObject.registerClass({
     GTypeName: 'MullvadToggle',
 }, class MullvadToggle extends QuickSettings.QuickMenuToggle {
-    _init(mullvad) {
+    _init(settings, path, mullvad) {
         super._init({
-            title: STATUS_STARTING,
-            gicon: Gio.icon_new_for_string(`${Me.path}/icons/${STATUS_DISCONNECTED}.svg`),
+            title: _('Initializing'),
+            gicon: Gio.icon_new_for_string(`${path}/icons/${ICON_DISCONNECTED}.svg`),
         });
 
-        // Get our settings
-        this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.MullvadIndicator');
+        this._settings = settings;
+        this._path = path;
 
         // Menu section with configurable connection status information
         this._detailedStatusSection = new PopupMenu.PopupMenuSection();
@@ -64,15 +58,15 @@ const MullvadToggle = GObject.registerClass({
 
     _sync(mullvad) {
         if (mullvad.connected) {
-            this.gicon = Gio.icon_new_for_string(`${Me.path}/icons/${ICON_CONNECTED}.svg`);
+            this.gicon = Gio.icon_new_for_string(`${this._path}/icons/${ICON_CONNECTED}.svg`);
 
-            this.title = mullvad.statusItem(this._settings.get_uint('title-text')) ?? STATUS_CONNECTED;
+            this.title = mullvad.statusItem(this._settings.get_uint('title-text')) ?? _('Connected');
             this.subtitle = mullvad.statusItem(this._settings.get_uint('subtitle-text'));
 
             this.checked = true;
         } else {
-            this.gicon = Gio.icon_new_for_string(`${Me.path}/icons/${ICON_DISCONNECTED}.svg`);
-            this.title = STATUS_DISCONNECTED;
+            this.gicon = Gio.icon_new_for_string(`${this._path}/icons/${ICON_DISCONNECTED}.svg`);
+            this.title = _('Disconnected');
             this.subtitle = null;
             this.checked = false;
         }
@@ -105,30 +99,27 @@ const MullvadToggle = GObject.registerClass({
 const MullvadIndicator = GObject.registerClass({
     GTypeName: 'MullvadIndicator',
 }, class MullvadIndicator extends QuickSettings.SystemIndicator {
-    _init() {
+    _init(settings, path) {
         super._init();
 
-        // Get our settings
-        this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.MullvadIndicator');
-
-        // Get translations
-        ExtensionUtils.initTranslations('mullvadindicator');
+        this._settings = settings;
+        this._path = path;
 
         // Instantiate our Mullvad object
-        this._mullvad = new Mullvad.MullvadVPN();
+        this._mullvad = new Mullvad.MullvadVPN(this._settings);
 
         // Connect all signals
         this._connectSignals();
 
-        // Create and add icon to the panel at position 0
+        // Create an icon for the panel
         this._indicator = this._addIndicator();
         this._indicator.visible = false;
-        QuickSettingsMenu._indicators.insert_child_at_index(this, 0);
 
-        // Create and add toggle to the menu below the network toggle
-        this._toggle = new MullvadToggle(this._mullvad);
+        // Create a toggle for quick settings
+        this._toggle = new MullvadToggle(this._settings, this._path, this._mullvad);
         this.quickSettingsItems.push(this._toggle);
-        QuickSettingsMenu._addItems(this.quickSettingsItems);
+
+        QuickSettingsMenu.addExternalIndicator(this);
 
         // Bind visibility settings
         this._settings.bind('show-icon', this._indicator, 'visible', Gio.SettingsBindFlags.DEFAULT);
@@ -170,7 +161,7 @@ const MullvadIndicator = GObject.registerClass({
 
     _sync() {
         let icon = this._mullvad.connected ? ICON_CONNECTED : ICON_DISCONNECTED;
-        this._indicator.gicon = Gio.icon_new_for_string(`${Me.path}/icons/${icon}.svg`);
+        this._indicator.gicon = Gio.icon_new_for_string(`${this._path}/icons/${icon}.svg`);
 
         this._toggle._sync(this._mullvad);
     }
@@ -209,16 +200,13 @@ const MullvadIndicator = GObject.registerClass({
     }
 });
 
-function init() {
-}
+export default class MullvadIndicatorExtension extends Extension {
+    enable() {
+        this._mullvadIndicator = new MullvadIndicator(this.getSettings(), this.path);
+    }
 
-let _mullvadIndicator;
-
-function enable() {
-    _mullvadIndicator = new MullvadIndicator();
-}
-
-function disable() {
-    _mullvadIndicator.destroy();
-    _mullvadIndicator = null;
+    disable() {
+        this._mullvadIndicator.destroy();
+        this._mullvadIndicator = null;
+    }
 }
