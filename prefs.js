@@ -1,28 +1,21 @@
-const {Adw, Gio, GObject, Gtk} = imports.gi;
-const Gettext = imports.gettext.domain('mullvadindicator');
-const _ = Gettext.gettext;
+import Adw from 'gi://Adw';
+import Gio from 'gi://Gio';
+import Gtk from 'gi://Gtk';
 
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Mullvad = Me.imports.mullvad;
+import * as Mullvad from './mullvad.js';
 
-const ExtensionUtils = imports.misc.extensionUtils;
+import {ExtensionPreferences, gettext as _} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
+export default class MullvadIndicatorPreferences extends ExtensionPreferences {
+    fillPreferencesWindow(window) {
+        this._settings = this.getSettings();
 
-
-class MullvadIndicatorPrefsWidget extends Adw.PreferencesPage {
-    static {
-        GObject.registerClass(this);
-    }
-
-    constructor() {
-        super();
-
-        this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.MullvadIndicator');
+        const page = new Adw.PreferencesPage();
 
         let group = new Adw.PreferencesGroup({
             title: _('Visibility'),
         });
-        this.add(group);
+        page.add(group);
 
         group.add(this._actionRow(_('Display indicator icon'), 'show-icon', new Gtk.Switch(), 'active'));
         group.add(this._actionRow(_('Show in system menu'), 'show-menu', new Gtk.Switch(), 'active'));
@@ -32,7 +25,7 @@ class MullvadIndicatorPrefsWidget extends Adw.PreferencesPage {
         group = new Adw.PreferencesGroup({
             title: _('Refresh'),
         });
-        this.add(group);
+        page.add(group);
 
         let spinButton = new Gtk.SpinButton();
         spinButton.set_range(1, 9999);
@@ -43,13 +36,15 @@ class MullvadIndicatorPrefsWidget extends Adw.PreferencesPage {
         group = new Adw.PreferencesGroup({
             title: _('Status'),
         });
-        this.add(group);
+        page.add(group);
 
         group.add(this._actionRow(_('Show currently connected server'), 'show-server', new Gtk.Switch(), 'active'));
         group.add(this._actionRow(_("Show currently connected server's country"), 'show-country', new Gtk.Switch(), 'active'));
         group.add(this._actionRow(_("Show currently connected server's city"), 'show-city', new Gtk.Switch(), 'active'));
         group.add(this._actionRow(_('Show your current IP address'), 'show-ip', new Gtk.Switch(), 'active'));
         group.add(this._actionRow(_('Show your VPN type (WireGuard/OpenVPN)'), 'show-type', new Gtk.Switch(), 'active'));
+
+        window.add(page);
     }
 
     _actionRow(title, key, object, property) {
@@ -77,11 +72,4 @@ class MullvadIndicatorPrefsWidget extends Adw.PreferencesPage {
 
         return row;
     }
-};
-
-function init() {
-}
-
-function buildPrefsWidget() {
-    return new MullvadIndicatorPrefsWidget();
 }
