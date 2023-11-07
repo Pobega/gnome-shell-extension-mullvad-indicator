@@ -2,6 +2,12 @@
 
 System tray indicator for Mullvad VPN. Monitors your connection and allows you to view connection details from the system tray.
 
+# Import note
+
+This is maintained on a best-effort basis as I am no longer a Mullvad VPN subscriber. In addition Gnome is constantly changing GnomeJS which causes the extension to break on every new major Gnome release. There is a fair amount of toil involved in just keeping this extension up-to-date for whatever changes the Gnome devs have made to break extension backwards compatibility.
+
+I am active on Github and willing to accept PRs/submit to extensions.gnome.org, but I am not actively maintaining this project anymore. Please feel empowered to contribute!
+
 ## How it works
 
 The extension listens for 'network-changed' events from [GNetworkmonitor](https://developer.gnome.org/gio/stable/GNetworkMonitor.html) and will poll Mullvad's `https://am.i.mullvad.net/json` API using Gnome's [libsoup](https://developer.gnome.org/libsoup/stable/) to get the system's current Mullvad connection status.
