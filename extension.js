@@ -162,6 +162,9 @@ const MullvadIndicator = GObject.registerClass({
     _sync() {
         let icon = this._mullvad.connected ? ICON_CONNECTED : ICON_DISCONNECTED;
         this._indicator.gicon = Gio.icon_new_for_string(`${this._path}/icons/${icon}.svg`);
+        if (this._settings.get_boolean('hide-icon-disconnected')) {
+            this._indicator.visible = this._mullvad.connected;
+        }
 
         this._toggle._sync(this._mullvad);
     }

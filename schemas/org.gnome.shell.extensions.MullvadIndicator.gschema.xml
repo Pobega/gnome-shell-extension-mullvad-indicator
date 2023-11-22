@@ -12,6 +12,14 @@
             </description>
         </key>
 
+        <key type="b" name="hide-icon-disconnected">
+            <default>false</default>
+            <summary>Hide if disconnected</summary>
+            <description>
+                Hide icon in system tray if not connected to the VPN
+            </description>
+        </key>
+
         <key type="b" name="show-menu">
             <default>true</default>
             <summary>Show Menu</summary>
