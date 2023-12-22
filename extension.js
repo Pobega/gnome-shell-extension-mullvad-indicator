@@ -8,6 +8,7 @@ import {Extension, gettext as _} from 'resource:///org/gnome/shell/extensions/ex
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 import * as QuickSettings from 'resource:///org/gnome/shell/ui/quickSettings.js';
+
 const QuickSettingsMenu = Main.panel.statusArea.quickSettings;
 
 const ICON_CONNECTED = 'mullvad-connected-symbolic';
@@ -16,12 +17,13 @@ const ICON_DISCONNECTED = 'mullvad-disconnected-symbolic';
 const MullvadToggle = GObject.registerClass({
     GTypeName: 'MullvadToggle',
 }, class MullvadToggle extends QuickSettings.QuickMenuToggle {
-    _init(settings, path, mullvad) {
+    _init(extension, settings, path, mullvad) {
         super._init({
             title: _('Initializing'),
             gicon: Gio.icon_new_for_string(`${path}/icons/${ICON_DISCONNECTED}.svg`),
         });
 
+        this._extension = extension;
         this._settings = settings;
         this._path = path;
 
@@ -43,15 +45,15 @@ const MullvadToggle = GObject.registerClass({
     _buildBottomSection(mullvad) {
         // Item for manually checking connection to Mullvad
         let refreshItem = new PopupMenu.PopupMenuItem(_('Refresh'));
-        refreshItem.actor.connect('button-press-event', () => {
+        refreshItem.actor.connect('activate', () => {
             mullvad._pollMullvad();
         });
         this._bottomSection.addMenuItem(refreshItem);
 
         // Item for opening extension settings
         let settingsItem = new PopupMenu.PopupMenuItem(_('Settings'));
-        settingsItem.actor.connect('button-press-event', () => {
-            ExtensionUtils.openPrefs();
+        settingsItem.actor.connect('activate', () => {
+            this._extension.openPreferences();
         });
         this._bottomSection.addMenuItem(settingsItem);
     }
@@ -99,9 +101,10 @@ const MullvadToggle = GObject.registerClass({
 const MullvadIndicator = GObject.registerClass({
     GTypeName: 'MullvadIndicator',
 }, class MullvadIndicator extends QuickSettings.SystemIndicator {
-    _init(settings, path) {
+    _init(extension, settings, path) {
         super._init();
 
+        this._extension = extension;
         this._settings = settings;
         this._path = path;
 
@@ -116,7 +119,7 @@ const MullvadIndicator = GObject.registerClass({
         this._indicator.visible = false;
 
         // Create a toggle for quick settings
-        this._toggle = new MullvadToggle(this._settings, this._path, this._mullvad);
+        this._toggle = new MullvadToggle(this._extension, this._settings, this._path, this._mullvad);
         this.quickSettingsItems.push(this._toggle);
 
         QuickSettingsMenu.addExternalIndicator(this);
@@ -202,7 +205,7 @@ const MullvadIndicator = GObject.registerClass({
 
 export default class MullvadIndicatorExtension extends Extension {
     enable() {
-        this._mullvadIndicator = new MullvadIndicator(this.getSettings(), this.path);
+        this._mullvadIndicator = new MullvadIndicator(this, this.getSettings(), this.path);
     }
 
     disable() {
