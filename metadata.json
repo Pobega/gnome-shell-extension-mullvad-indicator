@@ -8,5 +8,5 @@
   "url": "https://github.com/Pobega/gnome-shell-extension-mullvad-indicator",
   "settings-schema": "org.gnome.shell.extensions.MullvadIndicator",
   "gettext-domain": "mullvadindicator@pobega.github.com",
-  "version": 15.0
+  "version": 17
 }
