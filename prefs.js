@@ -18,6 +18,7 @@ export default class MullvadIndicatorPreferences extends ExtensionPreferences {
         page.add(group);
 
         group.add(this._actionRow(_('Display indicator icon'), 'show-icon', new Gtk.Switch(), 'active', window._settings));
+        group.add(this._actionRow(_('Only display icon when connected'), 'show-icon-only-when-connected', new Gtk.Switch(), 'active', window._settings, 'show-icon'));
         group.add(this._actionRow(_('Show in system menu'), 'show-menu', new Gtk.Switch(), 'active', window._settings));
         group.add(this._comboRow(_('Title text'), 'title-text', [...Mullvad.statusItemNames(), _('Connected')], window._settings));
         group.add(this._comboRow(_('Subtitle text'), 'subtitle-text', [...Mullvad.statusItemNames(), _('None')], window._settings));
@@ -47,7 +48,7 @@ export default class MullvadIndicatorPreferences extends ExtensionPreferences {
         window.add(page);
     }
 
-    _actionRow(title, key, object, property, settings) {
+    _actionRow(title, key, object, property, settings, sensitiveToKey = null) {
         const row = new Adw.ActionRow({title: title});
 
         object.valign = Gtk.Align.CENTER;
@@ -55,6 +56,10 @@ export default class MullvadIndicatorPreferences extends ExtensionPreferences {
         row.activatable_widget = object;
 
         settings.bind(key, object, property, Gio.SettingsBindFlags.DEFAULT);
+
+        if (sensitiveToKey) {
+            settings.bind(sensitiveToKey, row, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
+        }
 
         return row;
     }
