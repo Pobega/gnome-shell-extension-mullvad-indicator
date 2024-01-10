@@ -125,7 +125,6 @@ const MullvadIndicator = GObject.registerClass({
         QuickSettingsMenu.addExternalIndicator(this);
 
         // Bind visibility settings
-        this._settings.bind('show-icon', this._indicator, 'visible', Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('show-menu', this._toggle, 'visible', Gio.SettingsBindFlags.DEFAULT);
 
         // Start our GUI and enter our main loop
@@ -138,8 +137,8 @@ const MullvadIndicator = GObject.registerClass({
 
         // A list of prefs we want to immediately update the GUI for when changed
         let prefs = [
-            'show-icon', 'show-menu', 'show-server', 'show-country', 'show-city',
-            'show-type', 'show-ip', 'title-text', 'subtitle-text'
+            'show-icon', 'show-icon-only-when-connected', 'show-menu', 'show-server', 'show-country',
+            'show-city', 'show-type', 'show-ip', 'title-text', 'subtitle-text'
         ];
 
         for (let pref of prefs) {
@@ -162,9 +161,22 @@ const MullvadIndicator = GObject.registerClass({
             this._settings.disconnect(signal);
     }
 
+    _indicatorShouldBeVisible() {
+        if (!this._settings.get_boolean('show-icon')) {
+            return false;
+        }
+
+        if (!this._settings.get_boolean('show-icon-only-when-connected')) {
+            return true;
+        }
+
+        return this._mullvad.connected;
+    }
+
     _sync() {
         let icon = this._mullvad.connected ? ICON_CONNECTED : ICON_DISCONNECTED;
         this._indicator.gicon = Gio.icon_new_for_string(`${this._path}/icons/${icon}.svg`);
+        this._indicator.visible = this._indicatorShouldBeVisible();
 
         this._toggle._sync(this._mullvad);
     }

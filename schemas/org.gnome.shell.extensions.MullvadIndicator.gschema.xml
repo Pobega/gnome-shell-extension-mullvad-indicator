@@ -12,6 +12,14 @@
             </description>
         </key>
 
+        <key type="b" name="show-icon-only-when-connected">
+            <default>true</default>
+            <summary>Show Icon Only When Connected</summary>
+            <description>
+                    Only show icon in system tray when VPN is connected
+            </description>
+        </key>
+
         <key type="b" name="show-menu">
             <default>true</default>
             <summary>Show Menu</summary>
