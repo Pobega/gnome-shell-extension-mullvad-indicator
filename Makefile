@@ -11,7 +11,7 @@ genschema:
 # Build a zip for extensions.gnome.org releases
 zip:
 	zip -r mullvadindicator@pobega.github.com.zip \
-		extension.js mullvad.js prefs.js prefs.ui \
+		extension.js mullvad.js prefs.js \
 		metadata.json \
 		schemas icons \
 		LICENSE README.md
