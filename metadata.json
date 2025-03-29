@@ -4,10 +4,11 @@
   "uuid": "mullvadindicator@pobega.github.com",
   "shell-version": [
     "46",
-    "47"
+    "47",
+    "48"
   ],
   "url": "https://github.com/Pobega/gnome-shell-extension-mullvad-indicator",
   "settings-schema": "org.gnome.shell.extensions.MullvadIndicator",
   "gettext-domain": "mullvadindicator@pobega.github.com",
-  "version": 19
+  "version": 21
 }
