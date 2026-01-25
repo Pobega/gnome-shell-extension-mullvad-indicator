@@ -5,7 +5,8 @@
   "shell-version": [
     "46",
     "47",
-    "48"
+    "48",
+    "49"
   ],
   "url": "https://github.com/Pobega/gnome-shell-extension-mullvad-indicator",
   "settings-schema": "org.gnome.shell.extensions.MullvadIndicator",
