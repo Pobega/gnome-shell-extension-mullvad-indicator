@@ -13,7 +13,7 @@ zip:
 		LICENSE README.md
 
 lint:
-	npx eslint . --ext .js --fix
+	npx eslint . --fix
 
 install:
 	mkdir -p ~/.local/share/gnome-shell/extensions/mullvadindicator\@pobega.github.com/

@@ -1,0 +1,14 @@
+{
+  "name": "mullvadindicator",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "devDependencies": {
+    "eslint": "^9.36.0",
+    "eslint-config-gnome": "git+https://gitlab.gnome.org/World/javascript/eslint-config-gnome.git",
+    "globals": "^15.0.0"
+  }
+}
