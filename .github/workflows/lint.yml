@@ -1,0 +1,38 @@
+name: Lint
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: npm install
+      - name: Run ESLint
+        run: npx eslint .
+
+  pack:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate metadata.json
+        run: python3 -c "import json,sys; m=json.load(open('metadata.json')); [sys.exit(f'missing {k}') for k in ('uuid','name','description','shell-version') if k not in m]"
+      - name: Validate gschema XML
+        run: |
+          sudo apt-get update && sudo apt-get install -y libglib2.0-bin
+          glib-compile-schemas --dry-run --strict schemas/
+      - name: Build extension zip
+        run: make zip
+      - name: Check zip does not ship compiled schemas
+        run: |
+          if unzip -l mullvadindicator@pobega.github.com.zip | grep -q 'gschemas.compiled'; then
+            echo "ERROR: zip contains schemas/gschemas.compiled (EGO-P-006)" >&2
+            exit 1
+          fi

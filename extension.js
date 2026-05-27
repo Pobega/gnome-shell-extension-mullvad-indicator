@@ -138,7 +138,7 @@ const MullvadIndicator = GObject.registerClass({
         // A list of prefs we want to immediately update the GUI for when changed
         let prefs = [
             'show-icon', 'show-icon-only-when-connected', 'show-menu', 'show-server', 'show-country',
-            'show-city', 'show-type', 'show-ip', 'title-text', 'subtitle-text'
+            'show-city', 'show-type', 'show-ip', 'title-text', 'subtitle-text',
         ];
 
         for (let pref of prefs) {
@@ -162,13 +162,11 @@ const MullvadIndicator = GObject.registerClass({
     }
 
     _indicatorShouldBeVisible() {
-        if (!this._settings.get_boolean('show-icon')) {
+        if (!this._settings.get_boolean('show-icon'))
             return false;
-        }
 
-        if (!this._settings.get_boolean('show-icon-only-when-connected')) {
+        if (!this._settings.get_boolean('show-icon-only-when-connected'))
             return true;
-        }
 
         return this._mullvad.connected;
     }

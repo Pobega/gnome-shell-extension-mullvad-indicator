@@ -49,7 +49,7 @@ export default class MullvadIndicatorPreferences extends ExtensionPreferences {
     }
 
     _actionRow(title, key, object, property, settings, sensitiveToKey = null) {
-        const row = new Adw.ActionRow({title: title});
+        const row = new Adw.ActionRow({title});
 
         object.valign = Gtk.Align.CENTER;
         row.add_suffix(object);
@@ -57,20 +57,19 @@ export default class MullvadIndicatorPreferences extends ExtensionPreferences {
 
         settings.bind(key, object, property, Gio.SettingsBindFlags.DEFAULT);
 
-        if (sensitiveToKey) {
+        if (sensitiveToKey)
             settings.bind(sensitiveToKey, row, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
-        }
 
         return row;
     }
 
     _comboRow(title, key, list, settings) {
         const row = new Adw.ComboRow({
-            title: title,
+            title,
             model: new Gtk.StringList({
-                strings: list
+                strings: list,
             }),
-            selected: settings.get_uint(key)
+            selected: settings.get_uint(key),
         });
 
         settings.bind(key, row, 'selected', Gio.SettingsBindFlags.DEFAULT);

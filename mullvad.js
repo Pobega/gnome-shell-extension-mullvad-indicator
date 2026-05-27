@@ -20,7 +20,7 @@ const ITEMS_ENUMERATED = [
 ];
 
 export function statusItemNames() {
-    return ITEMS_ENUMERATED.map((item_enum) => DEFAULT_ITEMS[item_enum].name);
+    return ITEMS_ENUMERATED.map(item_enum => DEFAULT_ITEMS[item_enum].name);
 }
 
 export const MullvadVPN = GObject.registerClass({
