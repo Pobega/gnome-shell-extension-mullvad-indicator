@@ -44,18 +44,24 @@ const MullvadToggle = GObject.registerClass({
 
     _buildBottomSection(mullvad) {
         // Item for manually checking connection to Mullvad
-        let refreshItem = new PopupMenu.PopupMenuItem(_('Refresh'));
-        refreshItem.actor.connect('activate', () => {
+        this._refreshItem = new PopupMenu.PopupMenuItem(_('Refresh'));
+        this._refreshSignal = this._refreshItem.actor.connect('activate', () => {
             mullvad._pollMullvad();
         });
-        this._bottomSection.addMenuItem(refreshItem);
+        this._bottomSection.addMenuItem(this._refreshItem);
 
         // Item for opening extension settings
-        let settingsItem = new PopupMenu.PopupMenuItem(_('Settings'));
-        settingsItem.actor.connect('activate', () => {
+        this._settingsItem = new PopupMenu.PopupMenuItem(_('Settings'));
+        this._settingsSignal = this._settingsItem.actor.connect('activate', () => {
             this._extension.openPreferences();
         });
-        this._bottomSection.addMenuItem(settingsItem);
+        this._bottomSection.addMenuItem(this._settingsItem);
+    }
+
+    destroy() {
+        this._refreshItem.actor.disconnect(this._refreshSignal);
+        this._settingsItem.actor.disconnect(this._settingsSignal);
+        super.destroy();
     }
 
     _sync(mullvad) {
