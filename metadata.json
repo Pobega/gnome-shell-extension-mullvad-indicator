@@ -6,10 +6,11 @@
     "46",
     "47",
     "48",
-    "49"
+    "49",
+    "50"
   ],
   "url": "https://github.com/Pobega/gnome-shell-extension-mullvad-indicator",
   "settings-schema": "org.gnome.shell.extensions.MullvadIndicator",
   "gettext-domain": "mullvadindicator@pobega.github.com",
-  "version": 22
+  "version": 23
 }
