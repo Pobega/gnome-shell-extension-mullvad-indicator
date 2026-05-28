@@ -59,8 +59,16 @@ const MullvadToggle = GObject.registerClass({
     }
 
     destroy() {
-        this._refreshItem.actor.disconnect(this._refreshSignal);
-        this._settingsItem.actor.disconnect(this._settingsSignal);
+        if (this._refreshSignal) {
+            this._refreshItem.actor.disconnect(this._refreshSignal);
+            this._refreshSignal = null;
+        }
+        if (this._settingsSignal) {
+            this._settingsItem.actor.disconnect(this._settingsSignal);
+            this._settingsSignal = null;
+        }
+        this._refreshItem = null;
+        this._settingsItem = null;
         super.destroy();
     }
 
@@ -155,16 +163,18 @@ const MullvadIndicator = GObject.registerClass({
             ));
         }
 
-        this._signals.push(this._mullvad.connect(
+        this._mullvadSignal = this._mullvad.connect(
             'status-changed', () => {
                 this._sync();
             }
-        ));
+        );
     }
 
     _disconnectSignals() {
         for (let signal of this._signals)
             this._settings.disconnect(signal);
+
+        this._mullvad.disconnect(this._mullvadSignal);
     }
 
     _indicatorShouldBeVisible() {
